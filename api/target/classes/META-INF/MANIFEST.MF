@@ -1,0 +1,14 @@
+Manifest-Version: 1.0
+Bnd-LastModified: 1769011439475
+Build-Jdk-Spec: 16
+Bundle-ManifestVersion: 2
+Bundle-Name: OSGi E-Commerce :: API
+Bundle-SymbolicName: api
+Bundle-Version: 1.0.0.SNAPSHOT
+Created-By: Apache Maven Bundle Plugin 5.1.8
+Export-Package: com.mycompany.ecommerce.api.customer;uses:="com.mycompan
+ y.ecommerce.api.model";version="1.0.0",com.mycompany.ecommerce.api.mode
+ l;version="1.0.0"
+Import-Package: com.mycompany.ecommerce.api.model
+Require-Capability: osgi.ee;filter:="(&(osgi.ee=JavaSE)(version=1.8))"
+Tool: Bnd-6.3.1.202206071316

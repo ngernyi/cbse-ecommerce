@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<features name="ecommerce-features" xmlns="http://karaf.apache.org/xmlns/features/v1.4.0">
+
+    <feature name="ecommerce-customer" version="1.0.0-SNAPSHOT">
+        <feature>http</feature>
+        <feature>cxf-jaxrs</feature>
+        
+        <bundle>mvn:com.mycompany.ecommerce/api/1.0.0-SNAPSHOT</bundle>
+        <bundle>mvn:com.mycompany.ecommerce/customer-impl/1.0.0-SNAPSHOT</bundle>
+        <bundle>mvn:com.mycompany.ecommerce/customer-rest/1.0.0-SNAPSHOT</bundle>
+    </feature>
+
+</features>
