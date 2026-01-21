@@ -9,4 +9,11 @@ import java.util.List;
 @Repository
 public interface ProductRepository extends JpaRepository<Product, Long> {
     List<Product> findByNameContaining(String name);
+
+    List<Product> findByNameContainingOrDescriptionContaining(String name, String description,
+            org.springframework.data.domain.Sort sort);
+
+    List<Product> findByCategoriesId(Long categoryId, org.springframework.data.domain.Sort sort);
+
+    List<Product> findDistinctByCategoriesIdIn(java.util.List<Long> categoryIds);
 }

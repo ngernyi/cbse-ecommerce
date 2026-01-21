@@ -54,6 +54,18 @@ public class ProductService {
         return product;
     }
 
+    public List<Product> searchProducts(String keyword, String sortBy, String direction) {
+        org.springframework.data.domain.Sort sort = org.springframework.data.domain.Sort.by(
+                org.springframework.data.domain.Sort.Direction.fromString(direction), sortBy);
+        return productRepository.findByNameContainingOrDescriptionContaining(keyword, keyword, sort);
+    }
+
+    public List<Product> getProductsByCategoryId(Long categoryId, String sortBy, String direction) {
+        org.springframework.data.domain.Sort sort = org.springframework.data.domain.Sort.by(
+                org.springframework.data.domain.Sort.Direction.fromString(direction), sortBy);
+        return productRepository.findByCategoriesId(categoryId, sort);
+    }
+
     public void deleteProduct(Long id) {
         productRepository.deleteById(id);
     }
