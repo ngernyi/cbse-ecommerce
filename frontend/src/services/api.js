@@ -2,7 +2,7 @@ import axios from 'axios';
 
 // Create an instance of axios with default configuration
 const api = axios.create({
-    baseURL: 'http://localhost:8080/api', // Access Spring Boot backend
+    baseURL: 'http://localhost:63695', // Access Spring Boot backend
     headers: {
         'Content-Type': 'application/json',
     },

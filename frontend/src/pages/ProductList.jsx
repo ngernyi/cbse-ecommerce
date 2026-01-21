@@ -59,7 +59,11 @@ const ProductList = () => {
             {/* Header & Controls */}
             <div style={{ marginBottom: 'var(--spacing-8)' }}>
                 <h1 style={{ fontSize: 'var(--font-size-3xl)', fontWeight: 'bold', marginBottom: 'var(--spacing-4)' }}>
-                    {categoryParam ? `${categoryParam}` : searchParam ? `Search Results for "${searchParam}"` : 'All Products'}
+                    {categoryParam
+                        ? (categories.find(c => String(c.id) === categoryParam)?.name || 'Category')
+                        : searchParam
+                            ? `Search Results for "${searchParam}"`
+                            : 'All Products'}
                 </h1>
 
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: 'var(--spacing-4)' }}>
@@ -74,12 +78,12 @@ const ProductList = () => {
                         </button>
                         {categories.map(cat => (
                             <button
-                                key={cat}
-                                onClick={() => handleCategoryChange(cat)}
-                                className={`btn ${categoryParam === cat ? 'btn-primary' : 'btn-outline'}`}
+                                key={cat.id}
+                                onClick={() => handleCategoryChange(cat.id)}
+                                className={`btn ${categoryParam === String(cat.id) ? 'btn-primary' : 'btn-outline'}`}
                                 style={{ fontSize: 'var(--font-size-xs)' }}
                             >
-                                {cat}
+                                {cat.name}
                             </button>
                         ))}
                     </div>

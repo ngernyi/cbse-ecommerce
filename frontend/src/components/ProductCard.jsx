@@ -1,4 +1,4 @@
-import React from 'react';
+import api from '../services/api';
 import { Link } from 'react-router-dom';
 import { ShoppingCart, Heart, Star } from 'lucide-react';
 import { wishlistService } from '../services/wishlistService';
@@ -21,7 +21,7 @@ const ProductCard = ({ product }) => {
         <Link to={`/product/${product.id}`} className="card" style={{ padding: 0, overflow: 'hidden', display: 'flex', flexDirection: 'column', transition: 'transform 0.2s', textDecoration: 'none', color: 'inherit' }}>
             <div style={{ position: 'relative', paddingTop: '100%' }}>
                 <img
-                    src={product.image}
+                    src={product.images && product.images.length > 0 ? `${api.defaults.baseURL}${product.images[0].imageUrl}` : ''}
                     alt={product.name}
                     style={{
                         position: 'absolute',

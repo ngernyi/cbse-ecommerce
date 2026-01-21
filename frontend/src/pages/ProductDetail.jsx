@@ -5,6 +5,7 @@ import { wishlistService } from '../services/wishlistService';
 import { useCart } from '../context/CartContext';
 import ProductCard from '../components/ProductCard';
 import { ShoppingCart, Heart, Star, Minus, Plus, Loader } from 'lucide-react';
+import api from '../services/api';
 
 const ProductDetail = () => {
     const { id } = useParams();
@@ -54,7 +55,15 @@ const ProductDetail = () => {
             <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 'var(--spacing-12)', marginBottom: 'var(--spacing-16)' }}>
                 {/* Image */}
                 <div style={{ borderRadius: 'var(--radius-lg)', overflow: 'hidden', border: '1px solid var(--color-border)' }}>
-                    <img src={product.image} alt={product.name} style={{ width: '100%', height: 'auto', display: 'block' }} />
+                    <img
+                        src={
+                            product.images && product.images.length > 0
+                            ? `${api.defaults.baseURL}${product.images[0].imageUrl}`
+                            : ''
+                        }
+                        alt={product.name}
+                        style={{ width: '100%', height: 'auto', display: 'block' }}
+                        />
                 </div>
 
                 {/* Details */}
