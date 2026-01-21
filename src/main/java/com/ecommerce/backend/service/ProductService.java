@@ -36,6 +36,7 @@ public class ProductService {
         product.setName(productDetails.getName());
         product.setPrice(productDetails.getPrice());
         product.setDescription(productDetails.getDescription());
+        product.setRating(productDetails.getRating());
         if (productDetails.getCategories() != null) {
             product.setCategories(productDetails.getCategories());
         }

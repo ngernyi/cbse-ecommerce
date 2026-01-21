@@ -23,7 +23,7 @@ public class CustomerService {
         return customerRepository.findAll();
     }
 
-     public Customer getCustomerById(Long id) {
+    public Customer getCustomerById(Long id) {
         return customerRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Customer not found"));
     }
@@ -42,5 +42,11 @@ public class CustomerService {
 
     public void deleteCustomer(Long id) {
         customerRepository.deleteById(id);
+    }
+
+    public Customer login(String email, String password) {
+        return customerRepository.findByEmail(email)
+                .filter(customer -> customer.getPassword().equals(password))
+                .orElseThrow(() -> new RuntimeException("Invalid credentials"));
     }
 }

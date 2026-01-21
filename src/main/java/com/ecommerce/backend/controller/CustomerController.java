@@ -28,19 +28,45 @@ public class CustomerController {
 
     // Get a single customer's profile
     @GetMapping("/{id}")
-    public Customer getCustomerById(@PathVariable String id) {
-        return customerService.getCustomerById(Long.parseLong(id));
+    public Customer getCustomerById(@PathVariable Long id) {
+        return customerService.getCustomerById(id);
     }
 
     // Update profile
     @PutMapping("/{id}")
-    public Customer updateCustomer(@PathVariable String id, @RequestBody Customer customer) {
-        return customerService.updateCustomer(Long.parseLong(id), customer);
+    public Customer updateCustomer(@PathVariable Long id, @RequestBody Customer customer) {
+        return customerService.updateCustomer(id, customer);
     }
 
     // Delete profile
     @DeleteMapping("/{id}")
-    public void deleteCustomer(@PathVariable String id) {
-        customerService.deleteCustomer(Long.parseLong(id));
+    public void deleteCustomer(@PathVariable Long id) {
+        customerService.deleteCustomer(id);
+    }
+
+    @PostMapping("/login")
+    public Customer login(@RequestBody LoginRequest loginRequest) {
+        return customerService.login(loginRequest.getEmail(), loginRequest.getPassword());
+    }
+
+    public static class LoginRequest {
+        private String email;
+        private String password;
+
+        public String getEmail() {
+            return email;
+        }
+
+        public void setEmail(String email) {
+            this.email = email;
+        }
+
+        public String getPassword() {
+            return password;
+        }
+
+        public void setPassword(String password) {
+            this.password = password;
+        }
     }
 }
