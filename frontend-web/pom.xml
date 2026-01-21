@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <parent>
+        <groupId>com.mycompany.ecommerce</groupId>
+        <artifactId>osgi-ecommerce</artifactId>
+        <version>1.0.0-SNAPSHOT</version>
+        <relativePath>../pom.xml</relativePath>
+    </parent>
+
+    <artifactId>frontend-web</artifactId>
+    <packaging>bundle</packaging>
+    <name>OSGi E-Commerce :: Frontend Web</name>
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.felix</groupId>
+                <artifactId>maven-bundle-plugin</artifactId>
+                <version>5.1.8</version>
+                <extensions>true</extensions>
+                <configuration>
+                    <instructions>
+                        <Bundle-SymbolicName>${project.artifactId}</Bundle-SymbolicName>
+                        <Web-ContextPath>/shop</Web-ContextPath>
+                        <Include-Resource>WEB-INF/web.xml=src/main/resources/WEB-INF/web.xml, /=../frontend/dist</Include-Resource>
+                        <!-- Ensure we import javax.servlet for WAB -->
+                        <Import-Package>
+                            javax.servlet,
+                            javax.servlet.http,
+                            *
+                        </Import-Package>
+                    </instructions>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
+</project>

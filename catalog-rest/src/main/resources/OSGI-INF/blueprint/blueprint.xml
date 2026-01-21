@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<blueprint xmlns="http://www.osgi.org/xmlns/blueprint/v1.0.0"
+           xmlns:jaxrs="http://cxf.apache.org/blueprint/jaxrs"
+           xmlns:cxf="http://cxf.apache.org/blueprint/core">
+
+    <reference id="productService" interface="com.mycompany.ecommerce.api.ProductService"/>
+
+    <bean id="productRestService" class="com.mycompany.ecommerce.catalog.rest.ProductRestService">
+        <property name="productService" ref="productService"/>
+    </bean>
+
+    <jaxrs:server id="productRestServer" address="/api/catalog">
+        <jaxrs:serviceBeans>
+            <ref component-id="productRestService"/>
+        </jaxrs:serviceBeans>
+        <jaxrs:providers>
+             <bean class="com.fasterxml.jackson.jaxrs.json.JacksonJsonProvider"/>
+        </jaxrs:providers>
+    </jaxrs:server>
+
+</blueprint>

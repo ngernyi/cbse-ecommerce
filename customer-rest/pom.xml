@@ -48,8 +48,9 @@
                         <Import-Package>
                             javax.ws.rs,
                             javax.ws.rs.core,
-                            com.mycompany.ecommerce.api.customer,
-                            com.mycompany.ecommerce.api.model
+                            com.mycompany.ecommerce.api,
+                            com.mycompany.ecommerce.api.model,
+                            com.fasterxml.jackson.jaxrs.json
                         </Import-Package>
                     </instructions>
                 </configuration>

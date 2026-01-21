@@ -1,2 +1,16 @@
+com\mycompany\ecommerce\api\CustomerService.class
 com\mycompany\ecommerce\api\model\Customer.class
+com\mycompany\ecommerce\api\model\Wishlist.class
+com\mycompany\ecommerce\api\model\Product.class
+com\mycompany\ecommerce\api\model\OrderStatus.class
+com\mycompany\ecommerce\api\ProductAdminService.class
+com\mycompany\ecommerce\api\model\PaymentMethod.class
+com\mycompany\ecommerce\api\CartService.class
+com\mycompany\ecommerce\api\model\Address.class
+com\mycompany\ecommerce\api\OrderService.class
+com\mycompany\ecommerce\api\model\ProductImage.class
+com\mycompany\ecommerce\api\model\Category.class
+com\mycompany\ecommerce\api\model\CartItem.class
 com\mycompany\ecommerce\api\customer\CustomerService.class
+com\mycompany\ecommerce\api\model\OrderItem.class
+com\mycompany\ecommerce\api\ProductService.class

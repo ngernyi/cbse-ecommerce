@@ -18,6 +18,15 @@
     <module>api</module>
     <module>customer-impl</module>
     <module>customer-rest</module>
+    <module>catalog-impl</module>
+    <module>catalog-rest</module>
+    <module>cart-impl</module>
+    <module>cart-rest</module>
+    <module>order-impl</module>
+    <module>order-rest</module>
+    <module>product-admin-impl</module>
+    <module>product-admin-rest</module>
+    <module>frontend-web</module>
     <module xmlns="">features</module>
   </modules>
   <dependencyManagement>

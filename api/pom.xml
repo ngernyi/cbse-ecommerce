@@ -31,7 +31,7 @@
                         <_dsannotations-options>inherit</_dsannotations-options>
                         <Bundle-SymbolicName>${project.artifactId}</Bundle-SymbolicName>
                         <Export-Package>
-                            com.mycompany.ecommerce.api.customer,
+                            com.mycompany.ecommerce.api,
                             com.mycompany.ecommerce.api.model
                         </Export-Package>
                     </instructions>

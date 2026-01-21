@@ -1,0 +1,16 @@
+Manifest-Version: 1.0
+Bnd-LastModified: 1769033006413
+Build-Jdk-Spec: 16
+Bundle-Blueprint: OSGI-INF/blueprint/blueprint.xml
+Bundle-ManifestVersion: 2
+Bundle-Name: OSGi E-Commerce :: Product Admin Implementation
+Bundle-SymbolicName: product-admin-impl
+Bundle-Version: 1.0.0.SNAPSHOT
+Created-By: Apache Maven Bundle Plugin 5.1.8
+Export-Service: com.mycompany.ecommerce.api.ProductAdminService;osgi.ser
+ vice.blueprint.compname=productAdminService
+Import-Package: com.mycompany.ecommerce.api;version="[1.0,2)",com.mycomp
+ any.ecommerce.api.model;version="[1.0,2)",javax.sql
+Import-Service: javax.sql.DataSource;multiple:=false
+Require-Capability: osgi.ee;filter:="(&(osgi.ee=JavaSE)(version=1.8))"
+Tool: Bnd-6.3.1.202206071316

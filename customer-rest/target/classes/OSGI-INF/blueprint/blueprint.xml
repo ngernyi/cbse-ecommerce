@@ -3,18 +3,18 @@
            xmlns:jaxrs="http://cxf.apache.org/blueprint/jaxrs"
            xmlns:cxf="http://cxf.apache.org/blueprint/core">
 
-    <reference id="customerService" interface="com.mycompany.ecommerce.api.customer.CustomerService"/>
+    <reference id="customerService" interface="com.mycompany.ecommerce.api.CustomerService"/>
 
     <bean id="customerRestService" class="com.mycompany.ecommerce.customer.rest.CustomerRestService">
         <property name="customerService" ref="customerService"/>
     </bean>
 
-    <jaxrs:server id="customerRestServer" address="/api">
+    <jaxrs:server id="customerRestServer" address="/api/customer">
         <jaxrs:serviceBeans>
             <ref component-id="customerRestService"/>
         </jaxrs:serviceBeans>
         <jaxrs:providers>
-            <bean class="com.fasterxml.jackson.jaxrs.json.JacksonJsonProvider"/>
+             <bean class="com.fasterxml.jackson.jaxrs.json.JacksonJsonProvider"/>
         </jaxrs:providers>
     </jaxrs:server>
 

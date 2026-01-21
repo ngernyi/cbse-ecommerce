@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<blueprint xmlns="http://www.osgi.org/xmlns/blueprint/v1.0.0"
+           xmlns:jaxrs="http://cxf.apache.org/blueprint/jaxrs"
+           xmlns:cxf="http://cxf.apache.org/blueprint/core">
+
+    <reference id="orderService" interface="com.mycompany.ecommerce.api.OrderService"/>
+
+    <bean id="orderRestService" class="com.mycompany.ecommerce.order.rest.OrderRestService">
+        <property name="orderService" ref="orderService"/>
+    </bean>
+
+    <jaxrs:server id="orderRestServer" address="/api/order">
+        <jaxrs:serviceBeans>
+            <ref component-id="orderRestService"/>
+        </jaxrs:serviceBeans>
+        <jaxrs:providers>
+             <bean class="com.fasterxml.jackson.jaxrs.json.JacksonJsonProvider"/>
+        </jaxrs:providers>
+    </jaxrs:server>
+
+</blueprint>

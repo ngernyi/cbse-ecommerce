@@ -23,6 +23,13 @@
         <dependency>
             <groupId>org.osgi</groupId>
             <artifactId>osgi.core</artifactId>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.osgi</groupId>
+            <artifactId>osgi.cmpn</artifactId>
+            <version>${osgi.version}</version>
+            <scope>provided</scope>
         </dependency>
     </dependencies>
 
@@ -36,8 +43,9 @@
                         <Bundle-SymbolicName>${project.artifactId}</Bundle-SymbolicName>
                         <Private-Package>com.mycompany.ecommerce.customer.impl</Private-Package>
                         <Import-Package>
-                            com.mycompany.ecommerce.api.customer,
-                            com.mycompany.ecommerce.api.model
+                            com.mycompany.ecommerce.api,
+                            com.mycompany.ecommerce.api.model,
+                            javax.sql
                         </Import-Package>
                     </instructions>
                 </configuration>

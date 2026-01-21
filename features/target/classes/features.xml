@@ -1,13 +1,54 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <features name="ecommerce-features" xmlns="http://karaf.apache.org/xmlns/features/v1.4.0">
 
-    <feature name="ecommerce-customer" version="1.0.0-SNAPSHOT">
-        <feature>http</feature>
+    <!-- Shared Dependencies -->
+    <feature name="ecommerce-shared" version="1.0.0-SNAPSHOT">
+        <feature>aries-blueprint</feature>
         <feature>cxf-jaxrs</feature>
-        
+        <feature>war</feature>
+        <feature>pax-jdbc-h2</feature>
+        <feature>pax-jdbc-config</feature>
+        <feature>pax-jdbc-pool-dbcp2</feature>
         <bundle>mvn:com.mycompany.ecommerce/api/1.0.0-SNAPSHOT</bundle>
+    </feature>
+
+    <feature name="ecommerce-customer" version="1.0.0-SNAPSHOT">
+        <feature>ecommerce-shared</feature>
         <bundle>mvn:com.mycompany.ecommerce/customer-impl/1.0.0-SNAPSHOT</bundle>
         <bundle>mvn:com.mycompany.ecommerce/customer-rest/1.0.0-SNAPSHOT</bundle>
+    </feature>
+
+    <feature name="ecommerce-catalog" version="1.0.0-SNAPSHOT">
+        <feature>ecommerce-shared</feature>
+        <bundle>mvn:com.mycompany.ecommerce/catalog-impl/1.0.0-SNAPSHOT</bundle>
+        <bundle>mvn:com.mycompany.ecommerce/catalog-rest/1.0.0-SNAPSHOT</bundle>
+    </feature>
+
+    <feature name="ecommerce-cart" version="1.0.0-SNAPSHOT">
+        <feature>ecommerce-shared</feature>
+        <bundle>mvn:com.mycompany.ecommerce/cart-impl/1.0.0-SNAPSHOT</bundle>
+        <bundle>mvn:com.mycompany.ecommerce/cart-rest/1.0.0-SNAPSHOT</bundle>
+    </feature>
+
+    <feature name="ecommerce-order" version="1.0.0-SNAPSHOT">
+        <feature>ecommerce-shared</feature>
+        <bundle>mvn:com.mycompany.ecommerce/order-impl/1.0.0-SNAPSHOT</bundle>
+        <bundle>mvn:com.mycompany.ecommerce/order-rest/1.0.0-SNAPSHOT</bundle>
+    </feature>
+
+    <feature name="ecommerce-admin" version="1.0.0-SNAPSHOT">
+        <feature>ecommerce-shared</feature>
+        <bundle>mvn:com.mycompany.ecommerce/product-admin-impl/1.0.0-SNAPSHOT</bundle>
+        <bundle>mvn:com.mycompany.ecommerce/product-admin-rest/1.0.0-SNAPSHOT</bundle>
+        <bundle>mvn:com.mycompany.ecommerce/frontend-web/1.0.0-SNAPSHOT</bundle>
+    </feature>
+
+    <feature name="ecommerce-all" version="1.0.0-SNAPSHOT">
+        <feature>ecommerce-customer</feature>
+        <feature>ecommerce-catalog</feature>
+        <feature>ecommerce-cart</feature>
+        <feature>ecommerce-order</feature>
+        <feature>ecommerce-admin</feature>
     </feature>
 
 </features>
