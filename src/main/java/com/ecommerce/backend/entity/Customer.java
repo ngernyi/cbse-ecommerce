@@ -28,4 +28,7 @@ public class Customer {
     // Add more fields as needed (like address, etc.)
     @OneToMany(mappedBy = "customer", cascade = CascadeType.ALL, orphanRemoval = true)
     private java.util.List<Address> addresses;
+
+    @OneToMany(mappedBy = "customer", cascade = CascadeType.ALL, orphanRemoval = true)
+    private java.util.List<Wishlist> wishlists;
 }
