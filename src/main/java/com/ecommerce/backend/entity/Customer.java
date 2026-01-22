@@ -24,6 +24,7 @@ public class Customer {
     private String password;
 
     private String phone;
+    private String avatar;
 
     // Add more fields as needed (like address, etc.)
     @OneToMany(mappedBy = "customer", cascade = CascadeType.ALL, orphanRemoval = true)

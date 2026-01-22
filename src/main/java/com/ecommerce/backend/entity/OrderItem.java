@@ -33,4 +33,8 @@ public class OrderItem {
 
     @Column(nullable = false)
     private LocalDateTime orderDate;
+
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "address_id")
+    private Address address;
 }

@@ -32,10 +32,16 @@ public class CustomerService {
         Customer existing = customerRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Customer not found"));
 
-        // Update the fields you want
+        // Update basic fields
         existing.setName(updatedCustomer.getName());
         existing.setEmail(updatedCustomer.getEmail());
-        existing.setPassword(updatedCustomer.getPassword()); // normally hash the password
+        existing.setPhone(updatedCustomer.getPhone());
+        existing.setAvatar(updatedCustomer.getAvatar());
+
+        // Only update password if a new one is provided
+        if (updatedCustomer.getPassword() != null && !updatedCustomer.getPassword().isEmpty()) {
+            existing.setPassword(updatedCustomer.getPassword());
+        }
 
         return customerRepository.save(existing);
     }

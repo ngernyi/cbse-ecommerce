@@ -23,6 +23,11 @@ public class AddressService {
         Customer customer = customerRepository.findById(customerId)
                 .orElseThrow(() -> new RuntimeException("Customer not found with id: " + customerId));
         address.setCustomer(customer);
+
+        if (Boolean.TRUE.equals(address.getIsDefault())) {
+            unsetOtherDefaults(customerId, null);
+        }
+
         return addressRepository.save(address);
     }
 
@@ -37,12 +42,33 @@ public class AddressService {
 
     public Address updateAddress(Long id, Address addressDetails) {
         Address address = getAddressById(id);
+
+        address.setLabel(addressDetails.getLabel());
+        address.setFullName(addressDetails.getFullName());
         address.setStreet(addressDetails.getStreet());
         address.setCity(addressDetails.getCity());
         address.setState(addressDetails.getState());
         address.setZipCode(addressDetails.getZipCode());
         address.setCountry(addressDetails.getCountry());
+
+        if (Boolean.TRUE.equals(addressDetails.getIsDefault())) {
+            address.setIsDefault(true);
+            unsetOtherDefaults(address.getCustomer().getId(), id);
+        } else {
+            address.setIsDefault(false);
+        }
+
         return addressRepository.save(address);
+    }
+
+    private void unsetOtherDefaults(Long customerId, Long excludeAddressId) {
+        List<Address> addresses = addressRepository.findByCustomerId(customerId);
+        for (Address addr : addresses) {
+            if (!addr.getId().equals(excludeAddressId) && Boolean.TRUE.equals(addr.getIsDefault())) {
+                addr.setIsDefault(false);
+                addressRepository.save(addr);
+            }
+        }
     }
 
     public void deleteAddress(Long id) {

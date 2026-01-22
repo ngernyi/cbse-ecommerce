@@ -18,12 +18,14 @@ public class OrderItemService {
     private final OrderItemRepository orderItemRepository;
     private final CustomerRepository customerRepository;
     private final ProductRepository productRepository;
+    private final com.ecommerce.backend.repository.AddressRepository addressRepository;
 
     public OrderItemService(OrderItemRepository orderItemRepository, CustomerRepository customerRepository,
-            ProductRepository productRepository) {
+            ProductRepository productRepository, com.ecommerce.backend.repository.AddressRepository addressRepository) {
         this.orderItemRepository = orderItemRepository;
         this.customerRepository = customerRepository;
         this.productRepository = productRepository;
+        this.addressRepository = addressRepository;
     }
 
     public OrderItem createOrderItem(Long customerId, Long productId, Integer quantity) {
@@ -38,6 +40,16 @@ public class OrderItemService {
         orderItem.setQuantity(quantity);
         orderItem.setStatus(OrderStatus.PENDING);
         orderItem.setOrderDate(LocalDateTime.now());
+
+        // Set address
+        List<com.ecommerce.backend.entity.Address> addresses = addressRepository.findByCustomerId(customerId);
+        if (!addresses.isEmpty()) {
+            com.ecommerce.backend.entity.Address defaultAddress = addresses.stream()
+                    .filter(a -> Boolean.TRUE.equals(a.getIsDefault()))
+                    .findFirst()
+                    .orElse(addresses.get(0));
+            orderItem.setAddress(defaultAddress);
+        }
 
         return orderItemRepository.save(orderItem);
     }
