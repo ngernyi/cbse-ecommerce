@@ -1,79 +1,79 @@
-// Mock payment methods data
-const STORAGE_KEY = 'user_payment_methods';
-
-const MOCK_PAYMENT_METHODS = [
-    {
-        id: '1',
-        type: 'Credit Card',
-        last4: '4242',
-        brand: 'Visa',
-        expiryMonth: '12',
-        expiryYear: '2028',
-        holderName: 'Alex Johnson',
-        isDefault: true
-    }
-];
+import api from './api';
 
 export const paymentService = {
     getPaymentMethods: async () => {
-        return new Promise((resolve) => {
-            setTimeout(() => {
-                const stored = localStorage.getItem(STORAGE_KEY);
-                resolve(stored ? JSON.parse(stored) : MOCK_PAYMENT_METHODS);
-            }, 500);
-        });
+        try {
+            const userStr = localStorage.getItem('user');
+            const userId = userStr ? JSON.parse(userStr).id : 1;
+            const response = await api.get(`/customer/${userId}/payment-methods`);
+            // Backend returns list of PaymentMethod objects
+            // Frontend might expect fields like 'last4', 'brand' which backend might store differently.
+            // Backend stored: bankName, accountNumber, accountHolderName.
+            // We map them for UI consistency if needed.
+            return response.data.map(pm => ({
+                id: pm.id,
+                type: 'Bank Transfer', // Default type for now as schema supports account number
+                brand: pm.bankName,
+                last4: pm.accountNumber.slice(-4),
+                holderName: pm.accountHolderName,
+                isDefault: false // Backend doesn't support default yet
+            }));
+        } catch (error) {
+            console.error("Failed to load payment methods", error);
+            return [];
+        }
     },
 
     addPaymentMethod: async (method) => {
-        return new Promise((resolve) => {
-            setTimeout(() => {
-                const stored = JSON.parse(localStorage.getItem(STORAGE_KEY) || JSON.stringify(MOCK_PAYMENT_METHODS));
-                const newMethod = { ...method, id: Date.now().toString() };
+        try {
+            const userStr = localStorage.getItem('user');
+            const userId = userStr ? JSON.parse(userStr).id : 1;
+            // Map frontend fields (cardNumber, etc) to backend fields (accountNumber etc)
+            // Frontend PaymentMethods.jsx likely sends card details.
+            // We'll simplistic mapping: brand -> bankName, last4/number -> accountNumber
+            const payload = {
+                bankName: method.brand || 'Unknown Bank',
+                accountNumber: method.number || '0000',
+                accountHolderName: method.holderName,
+                customerId: userId
+            };
 
-                if (newMethod.isDefault || stored.length === 0) {
-                    stored.forEach(m => m.isDefault = false);
-                    newMethod.isDefault = true;
-                }
-
-                const updated = [...stored, newMethod];
-                localStorage.setItem(STORAGE_KEY, JSON.stringify(updated));
-                resolve(newMethod);
-            }, 500);
-        });
+            await api.post(`/customer/${userId}/payment-methods`, payload);
+            return await paymentService.getPaymentMethods(); // Reload
+        } catch (error) {
+            console.error("Failed to add payment method", error);
+            throw error;
+        }
     },
 
     updatePaymentMethod: async (id, updatedData) => {
-        return new Promise((resolve) => {
-            setTimeout(() => {
-                const stored = JSON.parse(localStorage.getItem(STORAGE_KEY) || JSON.stringify(MOCK_PAYMENT_METHODS));
-                let updatedMethods = stored.map(method => {
-                    if (method.id === id) {
-                        return { ...method, ...updatedData };
-                    }
-                    return method;
-                });
-
-                if (updatedData.isDefault) {
-                    updatedMethods = updatedMethods.map(method => {
-                        if (method.id !== id) method.isDefault = false;
-                        return method;
-                    });
-                }
-
-                localStorage.setItem(STORAGE_KEY, JSON.stringify(updatedMethods));
-                resolve(updatedMethods.find(m => m.id === id));
-            }, 500);
-        });
+        try {
+            const userStr = localStorage.getItem('user');
+            const userId = userStr ? JSON.parse(userStr).id : 1;
+            const payload = {
+                id: id,
+                bankName: updatedData.brand,
+                accountNumber: updatedData.number || '0000', // Warning: losing full number if not provided
+                accountHolderName: updatedData.holderName,
+                customerId: userId
+            };
+            await api.put(`/customer/${userId}/payment-methods/${id}`, payload);
+            return await paymentService.getPaymentMethods();
+        } catch (error) {
+            console.error("Failed to update payment method", error);
+            throw error;
+        }
     },
 
     deletePaymentMethod: async (id) => {
-        return new Promise((resolve) => {
-            setTimeout(() => {
-                const stored = JSON.parse(localStorage.getItem(STORAGE_KEY) || JSON.stringify(MOCK_PAYMENT_METHODS));
-                const filtered = stored.filter(m => m.id !== id);
-                localStorage.setItem(STORAGE_KEY, JSON.stringify(filtered));
-                resolve(true);
-            }, 500);
-        });
+        try {
+            const userStr = localStorage.getItem('user');
+            const userId = userStr ? JSON.parse(userStr).id : 1;
+            await api.delete(`/customer/${userId}/payment-methods/${id}`);
+            return true;
+        } catch (error) {
+            console.error("Failed to delete payment method", error);
+            throw error;
+        }
     }
 };

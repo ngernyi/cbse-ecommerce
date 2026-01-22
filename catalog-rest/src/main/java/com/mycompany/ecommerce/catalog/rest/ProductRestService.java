@@ -8,7 +8,7 @@ import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
 import java.util.List;
 
-@Path("/products")
+@Path("/")
 @Produces(MediaType.APPLICATION_JSON)
 @Consumes(MediaType.APPLICATION_JSON)
 public class ProductRestService {
@@ -19,44 +19,50 @@ public class ProductRestService {
         this.productService = productService;
     }
 
-    // ==================== Search Products ====================
+    // ==================== Products & Search ====================
 
     @GET
-    public List<Product> searchProducts(@QueryParam("search") String search) {
+    @Path("products")
+    public List<Product> getProducts(@QueryParam("search") String search) {
         if (search != null && !search.isEmpty()) {
             return productService.searchProducts(search);
         }
-        // If no search query, return recommendations or all products (not defined in UC, defaulting to recommendations)
-        return productService.getRecommendations();
-    }
-
-    // ==================== Browse Categories ====================
-
-    @GET
-    @Path("/categories")
-    public List<Category> getAllCategories() {
-        return productService.getAllCategories();
+        return productService.getAllProducts();
     }
 
     @GET
-    @Path("/category/{categoryId}")
+    @Path("products/{id}")
+    public Product getProduct(@PathParam("id") Long id) {
+        return productService.getProduct(id);
+    }
+
+    @GET
+    @Path("products/category/{categoryId}")
     public List<Product> getProductsByCategory(@PathParam("categoryId") Long categoryId) {
         return productService.getProductsByCategory(categoryId);
     }
 
-    // ==================== View Recommendations ====================
+    // ==================== Categories ====================
 
     @GET
-    @Path("/recommendations")
+    @Path("categories")
+    public List<Category> getAllCategories() {
+        return productService.getAllCategories();
+    }
+
+    // ==================== Recommendations ====================
+
+    @GET
+    @Path("recommendations")
     public List<Product> getRecommendations() {
+        // Frontend might append ID, but if it fails 404, we can add a variant
         return productService.getRecommendations();
     }
 
-    // ==================== Product Details ====================
-
     @GET
-    @Path("/{id}")
-    public Product getProduct(@PathParam("id") Long id) {
-        return productService.getProduct(id);
+    @Path("recommendations/{customerId}")
+    public List<Product> getRecommendationsForCustomer(@PathParam("customerId") Long customerId) {
+        // Ignoring ID for now as per logic
+        return productService.getRecommendations();
     }
 }

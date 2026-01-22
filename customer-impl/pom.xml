@@ -45,7 +45,9 @@
                         <Import-Package>
                             com.mycompany.ecommerce.api,
                             com.mycompany.ecommerce.api.model,
-                            javax.sql
+                            javax.sql,
+                            com.mysql.cj.jdbc,
+                            *
                         </Import-Package>
                     </instructions>
                 </configuration>

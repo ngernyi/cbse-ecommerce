@@ -21,11 +21,27 @@ public class ProductServiceImpl implements ProductService {
     // ==================== Search Products (UC-CS-01) ====================
 
     @Override
+    public List<Product> getAllProducts() {
+        List<Product> list = new ArrayList<>();
+        String sql = "SELECT * FROM products";
+        try (Connection conn = dataSource.getConnection();
+                PreparedStatement ps = conn.prepareStatement(sql);
+                ResultSet rs = ps.executeQuery()) {
+            while (rs.next()) {
+                list.add(mapProduct(rs));
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return list;
+    }
+
+    @Override
     public List<Product> searchProducts(String keyword) {
         List<Product> list = new ArrayList<>();
         String sql = "SELECT * FROM products WHERE name LIKE ? OR description LIKE ?";
         try (Connection conn = dataSource.getConnection();
-             PreparedStatement ps = conn.prepareStatement(sql)) {
+                PreparedStatement ps = conn.prepareStatement(sql)) {
             String pattern = "%" + keyword + "%";
             ps.setString(1, pattern);
             ps.setString(2, pattern);
@@ -47,8 +63,8 @@ public class ProductServiceImpl implements ProductService {
         List<Category> list = new ArrayList<>();
         String sql = "SELECT * FROM categories";
         try (Connection conn = dataSource.getConnection();
-             PreparedStatement ps = conn.prepareStatement(sql);
-             ResultSet rs = ps.executeQuery()) {
+                PreparedStatement ps = conn.prepareStatement(sql);
+                ResultSet rs = ps.executeQuery()) {
             while (rs.next()) {
                 Category c = new Category();
                 c.setId(rs.getLong("id"));
@@ -68,7 +84,7 @@ public class ProductServiceImpl implements ProductService {
         // Join product_categories table
         String sql = "SELECT p.* FROM products p JOIN product_categories pc ON p.id = pc.product_id WHERE pc.category_id = ?";
         try (Connection conn = dataSource.getConnection();
-             PreparedStatement ps = conn.prepareStatement(sql)) {
+                PreparedStatement ps = conn.prepareStatement(sql)) {
             ps.setLong(1, categoryId);
             try (ResultSet rs = ps.executeQuery()) {
                 while (rs.next()) {
@@ -90,8 +106,8 @@ public class ProductServiceImpl implements ProductService {
         // H2/MySQL generic random. RAND() works in both.
         String sql = "SELECT * FROM products ORDER BY RAND() LIMIT 5";
         try (Connection conn = dataSource.getConnection();
-             PreparedStatement ps = conn.prepareStatement(sql);
-             ResultSet rs = ps.executeQuery()) {
+                PreparedStatement ps = conn.prepareStatement(sql);
+                ResultSet rs = ps.executeQuery()) {
             while (rs.next()) {
                 list.add(mapProduct(rs));
             }
@@ -107,7 +123,7 @@ public class ProductServiceImpl implements ProductService {
     public Product getProduct(Long id) {
         String sql = "SELECT * FROM products WHERE id = ?";
         try (Connection conn = dataSource.getConnection();
-             PreparedStatement ps = conn.prepareStatement(sql)) {
+                PreparedStatement ps = conn.prepareStatement(sql)) {
             ps.setLong(1, id);
             try (ResultSet rs = ps.executeQuery()) {
                 if (rs.next()) {
@@ -127,7 +143,8 @@ public class ProductServiceImpl implements ProductService {
         p.setPrice(rs.getDouble("price"));
         p.setRating(rs.getDouble("rating"));
         p.setDescription(rs.getString("description"));
-        // Ideally fetch images too, but for list view we might skip or do eager fetch in separate query
+        // Ideally fetch images too, but for list view we might skip or do eager fetch
+        // in separate query
         p.setImages(getProductImages(p.getId()));
         return p;
     }
@@ -135,8 +152,8 @@ public class ProductServiceImpl implements ProductService {
     private List<ProductImage> getProductImages(Long productId) {
         List<ProductImage> list = new ArrayList<>();
         String sql = "SELECT * FROM product_images WHERE product_id = ?";
-         try (Connection conn = dataSource.getConnection();
-             PreparedStatement ps = conn.prepareStatement(sql)) {
+        try (Connection conn = dataSource.getConnection();
+                PreparedStatement ps = conn.prepareStatement(sql)) {
             ps.setLong(1, productId);
             try (ResultSet rs = ps.executeQuery()) {
                 while (rs.next()) {

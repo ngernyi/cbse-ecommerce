@@ -20,40 +20,43 @@ import ProductManagement from './pages/admin/ProductManagement';
 import CategoryManagement from './pages/admin/CategoryManagement';
 import { AuthProvider } from './context/AuthContext';
 import { CartProvider } from './context/CartContext';
+import { WishlistProvider } from './context/WishlistContext';
 
 function App() {
   return (
     <AuthProvider>
       <CartProvider>
-        <Router>
-          <Routes>
-            <Route path="/" element={<MainLayout />}>
-              <Route index element={<ProductList />} />
-              <Route path="product/:id" element={<ProductDetail />} />
-              <Route path="profile" element={<Profile />} />
-              <Route path="addresses" element={<Addresses />} />
-              <Route path="wishlist" element={<Wishlist />} />
-              <Route path="payment-methods" element={<PaymentMethods />} />
-              <Route path="cart" element={<Cart />} />
-              <Route path="orders" element={<OrderHistory />} />
-              <Route path="orders/:id" element={<OrderDetails />} />
-            </Route>
+        <WishlistProvider>
+          <Router basename="/shop">
+            <Routes>
+              <Route path="/" element={<MainLayout />}>
+                <Route index element={<ProductList />} />
+                <Route path="product/:id" element={<ProductDetail />} />
+                <Route path="profile" element={<Profile />} />
+                <Route path="addresses" element={<Addresses />} />
+                <Route path="wishlist" element={<Wishlist />} />
+                <Route path="payment-methods" element={<PaymentMethods />} />
+                <Route path="cart" element={<Cart />} />
+                <Route path="orders" element={<OrderHistory />} />
+                <Route path="orders/:id" element={<OrderDetails />} />
+              </Route>
 
-            <Route element={<AuthLayout />}>
-              <Route path="/login" element={<Login />} />
-              <Route path="/register" element={<Register />} />
-            </Route>
+              <Route element={<AuthLayout />}>
+                <Route path="/login" element={<Login />} />
+                <Route path="/register" element={<Register />} />
+              </Route>
 
-            <Route path="/admin" element={<AdminLayout />}>
-              <Route index element={<AdminDashboard />} />
-              <Route path="products" element={<ProductManagement />} />
-              <Route path="categories" element={<CategoryManagement />} />
-              <Route path="orders" element={<div>Orders Management (Coming Soon)</div>} />
-              <Route path="customers" element={<div>Customer Management (Coming Soon)</div>} />
-              <Route path="settings" element={<div>Settings (Coming Soon)</div>} />
-            </Route>
-          </Routes>
-        </Router>
+              <Route path="/admin" element={<AdminLayout />}>
+                <Route index element={<AdminDashboard />} />
+                <Route path="products" element={<ProductManagement />} />
+                <Route path="categories" element={<CategoryManagement />} />
+                <Route path="orders" element={<div>Orders Management (Coming Soon)</div>} />
+                <Route path="customers" element={<div>Customer Management (Coming Soon)</div>} />
+                <Route path="settings" element={<div>Settings (Coming Soon)</div>} />
+              </Route>
+            </Routes>
+          </Router>
+        </WishlistProvider>
       </CartProvider>
     </AuthProvider>
   );

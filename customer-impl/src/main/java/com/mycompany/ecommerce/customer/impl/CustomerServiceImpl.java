@@ -49,10 +49,12 @@ public class CustomerServiceImpl implements CustomerService {
             try (ResultSet rs = ps.getGeneratedKeys()) {
                 if (rs.next()) {
                     customer.setId(rs.getLong(1));
+                    System.out.println("Customer created with ID: " + customer.getId());
                 }
             }
         } catch (SQLException e) {
             e.printStackTrace();
+            throw new RuntimeException("Error creating customer: " + e.getMessage());
         }
     }
 
@@ -73,6 +75,7 @@ public class CustomerServiceImpl implements CustomerService {
 
     @Override
     public Customer login(String email, String password) {
+        System.out.println("Attempting login for email: " + email);
         String sql = "SELECT * FROM customers WHERE email = ? AND password = ?";
         try (Connection conn = dataSource.getConnection();
                 PreparedStatement ps = conn.prepareStatement(sql)) {
@@ -80,11 +83,15 @@ public class CustomerServiceImpl implements CustomerService {
             ps.setString(2, password);
             try (ResultSet rs = ps.executeQuery()) {
                 if (rs.next()) {
+                    System.out.println("User found for email: " + email);
                     return mapCustomer(rs);
+                } else {
+                    System.out.println("No user found for email: " + email);
                 }
             }
         } catch (SQLException e) {
             e.printStackTrace();
+            System.out.println("SQL Error during login: " + e.getMessage());
         }
         return null;
     }

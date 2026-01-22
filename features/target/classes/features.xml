@@ -6,7 +6,8 @@
         <feature>aries-blueprint</feature>
         <feature>cxf-jaxrs</feature>
         <feature>war</feature>
-        <feature>pax-jdbc-h2</feature>
+        <!-- <feature>pax-jdbc-h2</feature> -->
+        <bundle>mvn:com.mysql/mysql-connector-j/8.0.33</bundle>
         <feature>pax-jdbc-config</feature>
         <feature>pax-jdbc-pool-dbcp2</feature>
         <bundle>mvn:com.mycompany.ecommerce/api/1.0.0-SNAPSHOT</bundle>

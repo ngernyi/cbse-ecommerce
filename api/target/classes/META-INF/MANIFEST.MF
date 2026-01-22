@@ -1,5 +1,5 @@
 Manifest-Version: 1.0
-Bnd-LastModified: 1769033002370
+Bnd-LastModified: 1769095706167
 Build-Jdk-Spec: 16
 Bundle-ManifestVersion: 2
 Bundle-Name: OSGi E-Commerce :: API

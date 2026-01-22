@@ -1,18 +1,18 @@
 Manifest-Version: 1.0
-Bnd-LastModified: 1769033003815
+Bnd-LastModified: 1769095706880
 Build-Jdk-Spec: 16
 Bundle-Blueprint: OSGI-INF/blueprint/blueprint.xml,OSGI-INF/blueprint/da
- tasource-h2.xml
+ tasource-mysql.xml
 Bundle-ManifestVersion: 2
 Bundle-Name: OSGi E-Commerce :: Customer Implementation
 Bundle-SymbolicName: customer-impl
 Bundle-Version: 1.0.0.SNAPSHOT
 Created-By: Apache Maven Bundle Plugin 5.1.8
-Export-Service: com.mycompany.ecommerce.api.CustomerService;osgi.service
- .blueprint.compname=customerService,javax.sql.DataSource;osgi.jndi.serv
- ice.name=jdbc/ecommerce;osgi.service.blueprint.compname=dataSource
+Export-Service: javax.sql.DataSource;osgi.jndi.service.name=jdbc/ecommer
+ ce;osgi.service.blueprint.compname=mysqlDataSource,com.mycompany.ecomme
+ rce.api.CustomerService;osgi.service.blueprint.compname=customerService
 Import-Package: com.mycompany.ecommerce.api;version="[1.0,2)",com.mycomp
- any.ecommerce.api.model;version="[1.0,2)",javax.sql
-Import-Service: javax.sql.DataSource;multiple:=false
+ any.ecommerce.api.model;version="[1.0,2)",javax.sql,com.mysql.cj.jdbc,o
+ rg.osgi.service.blueprint;version="[1.0.0,2.0.0)"
 Require-Capability: osgi.ee;filter:="(&(osgi.ee=JavaSE)(version=1.8))"
 Tool: Bnd-6.3.1.202206071316

@@ -4,10 +4,8 @@
            xsi:schemaLocation="http://www.osgi.org/xmlns/blueprint/v1.0.0 http://www.osgi.org/xmlns/blueprint/v1.0.0/blueprint.xsd">
 
     <bean id="customerService" class="com.mycompany.ecommerce.customer.impl.CustomerServiceImpl">
-        <property name="dataSource" ref="dataSource"/>
+        <property name="dataSource" ref="mysqlDataSource"/>
     </bean>
-
-    <reference id="dataSource" interface="javax.sql.DataSource"/>
 
     <service ref="customerService" interface="com.mycompany.ecommerce.api.CustomerService"/>
 

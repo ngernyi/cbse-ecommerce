@@ -10,6 +10,8 @@ public interface ProductService {
     // UC-CS-01 Search Products
     List<Product> searchProducts(String keyword);
 
+    List<Product> getAllProducts();
+
     // UC-CS-02 Browse Categories
     List<Category> getAllCategories();
 

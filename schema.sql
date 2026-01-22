@@ -44,6 +44,13 @@ CREATE TABLE IF NOT EXISTS products (
     category VARCHAR(100)
 );
 
+CREATE TABLE IF NOT EXISTS product_images (
+    id BIGINT AUTO_INCREMENT PRIMARY KEY,
+    product_id BIGINT,
+    image_url VARCHAR(255),
+    FOREIGN KEY (product_id) REFERENCES products(id)
+);
+
 CREATE TABLE IF NOT EXISTS wishlist_products (
     wishlist_id BIGINT,
     product_id BIGINT,

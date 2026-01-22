@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<blueprint xmlns="http://www.osgi.org/xmlns/blueprint/v1.0.0">
+
+    <!-- MySQL DataSource for XAMPP -->
+    <bean id="mysqlDataSource" class="com.mysql.cj.jdbc.MysqlDataSource">
+        <property name="url" value="jdbc:mysql://localhost:3306/ecommerce?createDatabaseIfNotExist=true&amp;allowPublicKeyRetrieval=true&amp;useSSL=false&amp;serverTimezone=UTC"/>
+        <property name="user" value="root"/>
+        <property name="password" value=""/>
+    </bean>
+
+    <service interface="javax.sql.DataSource" ref="mysqlDataSource">
+        <service-properties>
+            <entry key="osgi.jndi.service.name" value="jdbc/ecommerce"/>
+        </service-properties>
+    </service>
+
+</blueprint>

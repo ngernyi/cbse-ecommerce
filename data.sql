@@ -20,3 +20,12 @@ INSERT INTO addresses (customer_id, street, city, state, zip_code, country) VALU
 -- Insert Sample Payment Methods
 INSERT INTO payment_methods (customer_id, bank_name, account_number, account_holder_name) VALUES
 (1, 'Chase', '123456789', 'John Doe');
+
+-- Insert Sample Product Images
+INSERT INTO product_images (product_id, image_url) VALUES
+(1, '/assets/images/product-1.jpg'),
+(2, '/assets/images/product-2.jpg'),
+(3, '/assets/images/product-3.jpg'),
+(4, '/assets/images/product-4.jpg'),
+(5, '/assets/images/product-5.jpg'),
+(6, '/assets/images/product-6.jpg');
