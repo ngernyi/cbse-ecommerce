@@ -15,7 +15,7 @@ const OrderHistory = () => {
         try {
             const data = await orderService.getOrders();
             // Sort by date desc
-            setOrders(data.sort((a, b) => new Date(b.date) - new Date(a.date)));
+            setOrders(data.sort((a, b) => new Date(b.orderDate) - new Date(a.orderDate)));
         } catch (error) {
             console.error("Failed to load orders", error);
         } finally {
@@ -54,9 +54,9 @@ const OrderHistory = () => {
                                     <span style={{ fontSize: 'var(--font-size-xs)', padding: '2px 8px', borderRadius: '12px', border: `1px solid ${getStatusColor(order.status)}`, color: getStatusColor(order.status) }}>{order.status}</span>
                                 </div>
                                 <p style={{ color: 'var(--color-text-muted)', fontSize: 'var(--font-size-sm)' }}>
-                                    {new Date(order.date).toLocaleDateString()} at {new Date(order.date).toLocaleTimeString()}
+                                    {new Date(order.orderDate).toLocaleDateString()} at {new Date(order.orderDate).toLocaleTimeString()}
                                 </p>
-                                <p style={{ fontWeight: 'bold', marginTop: 'var(--spacing-2)' }}>${order.total.toFixed(2)}</p>
+                                <p style={{ fontWeight: 'bold', marginTop: 'var(--spacing-2)' }}>${order.totalAmount.toFixed(2)}</p>
                             </div>
                             <ChevronRight size={20} color="var(--color-text-muted)" />
                         </Link>

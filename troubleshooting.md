@@ -1,37 +1,65 @@
-# Troubleshooting Guide: E-Commerce Application Deployment
+# Troubleshooting Guide
 
-This document tracks the steps taken to resolve errors during the deployment of the OSGi e-commerce application.
+This guide provides solutions to common problems you might encounter while developing and running the OSGi E-Commerce project.
 
-## Problem
+## 1. Build Failures
 
-The application fails to start correctly. Initially "Table not found" with H2, then "Missing Dependencies" during MySQL migration, and finally REST bundles timing out.
+### Symptom: Maven build fails with "package ... does not exist"
+- **Cause**: This usually happens when the `api` bundle has not been built and installed into your local Maven repository.
+- **Solution**: Run `mvn clean install` from the root of the project. This will build all modules in the correct order.
 
-## Steps Taken
+### Symptom: Frontend build fails with a syntax error
+- **Cause**: The frontend code might have a syntax error.
+- **Solution**: Check the error message in the console. The build tool (Vite) usually provides a clear error message with the file and line number. Fix the syntax error and try building again.
 
-1.  **Diagnosed Initial 404 Error**:
-    *   **Resolution**: Build frontend and installed `ecommerce-all`.
+## 2. Runtime Issues in Karaf
 
-2.  **Migrated to MySQL**:
-    *   **Reason**: H2 schema persistence issues.
-    *   **Action**: Configured `MysqlDataSource` and installed proper driver.
+### Symptom: Bundle is in "Installed" state, not "Active"
+- **Cause**: The bundle has unresolved dependencies. This means it requires a package that is not exported by any other active bundle.
+- **Solution**: Use the `diag <bundle-id>` command in the Karaf console to see the unresolved dependencies. For example, if your `customer-impl` bundle is not starting, run `diag <customer-impl-bundle-id>`. This will tell you which package is missing. You might need to install another bundle that exports the required package.
 
-3.  **Fixed Blueprint Deadlock**:
-    *   **Issue**: `customer-impl` was deadlocked waiting for its own DataSource.
-    *   **Action**: Injected `mysqlDataSource` bean internally in `blueprint.xml`.
+### Symptom: REST APIs are not available (404 Not Found)
+- **Cause**:
+    1. The `*-rest` bundle is not active.
+    2. The CXF feature is not installed.
+    3. There is a problem with the JAX-RS annotations in your REST service.
+- **Solution**:
+    1. Check the status of your `*-rest` bundles using `list`.
+    2. Make sure the `cxf` feature is installed by running `feature:list -i | grep cxf`. If it's not installed, run `feature:install cxf`.
+    3. Check your REST service classes for any errors in the `@Path`, `@GET`, `@POST`, etc. annotations.
 
-4.  **Restarted Implementation Bundles**:
-    *   Implementation bundles start successfully after the deadlock fix.
+### Symptom: Frontend is not loading at `http://localhost:8181/shop`
+- **Cause**:
+    1. The `frontend-web` bundle is not active.
+    2. The `pax-web-wab` feature is not installed.
+- **Solution**:
+    1. Check the status of the `frontend-web` bundle using `list`.
+    2. Make sure the `pax-web-wab` feature is installed by running `feature:list -i | grep pax-web-wab`. If not, run `feature:install pax-web-wab`.
 
-5.  **Restarted REST Bundles**:
-    *   **Issue**: REST bundles (`*-rest`) entered `Failure` state because they timed out waiting for the implementation services to come online.
-    *   **Resolution**: Restarted the failed REST bundles after verifying the Impl bundles were `Active`.
+## 3. Database Issues
 
-## Current Status
+### Symptom: "Table not found" error in the logs
+- **Cause**: The database schema has not been created.
+- **Solution**: Make sure you have executed the `schema.sql` script in your MySQL database.
 
-*   **All Bundles**: Should be `Active`.
-*   **Application**: Accessible at `http://localhost:8181/shop/`.
+### Symptom: Application fails to connect to the database
+- **Cause**:
+    1. The MySQL JDBC driver is not installed in Karaf.
+    2. The datasource configuration in `datasource-mysql.xml` is incorrect.
+- **Solution**:
+    1. Install the MySQL driver in Karaf (see `MYSQL_SETUP.md`).
+    2. Double-check the database URL, username, and password in your `datasource-mysql.xml` file.
 
-## Verification Commands
-1.  **Check Status**: `list` (All 80 level bundles should be Active).
-2.  **Test API**: `curl http://localhost:8181/cxf/products`
-3.  **Test UI**: Open `http://localhost:8181/shop`.
+## 4. Frontend Issues
+
+### Symptom: Product images are not loading
+- **Cause**:
+    1. The image files are not in the correct directory.
+    2. The `product_images` table in the database is empty.
+- **Solution**:
+    1. Place your product images in the `frontend/public/assets/images/` directory.
+    2. Make sure you have executed the `data.sql` script to populate the `product_images` table.
+
+### Symptom: "Failed to update profile" or other API errors
+- **Cause**: There is a mismatch between the frontend's API call and the backend's API endpoint.
+- **Solution**: Check the browser's developer console (Network tab) to inspect the failed API request. Compare the request URL, method, and payload with the backend's REST service definition.

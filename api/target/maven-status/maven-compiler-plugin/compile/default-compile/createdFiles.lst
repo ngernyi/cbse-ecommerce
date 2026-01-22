@@ -1,5 +1,6 @@
 com\mycompany\ecommerce\api\CustomerService.class
 com\mycompany\ecommerce\api\model\Customer.class
+com\mycompany\ecommerce\api\model\Order.class
 com\mycompany\ecommerce\api\model\Wishlist.class
 com\mycompany\ecommerce\api\model\Product.class
 com\mycompany\ecommerce\api\model\OrderStatus.class

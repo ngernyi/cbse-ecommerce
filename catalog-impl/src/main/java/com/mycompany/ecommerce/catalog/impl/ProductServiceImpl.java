@@ -143,6 +143,13 @@ public class ProductServiceImpl implements ProductService {
         p.setPrice(rs.getDouble("price"));
         p.setRating(rs.getDouble("rating"));
         p.setDescription(rs.getString("description"));
+        if (checkColumn(rs, "weight"))
+            p.setWeight(rs.getDouble("weight"));
+        if (checkColumn(rs, "dimensions"))
+            p.setDimensions(rs.getString("dimensions"));
+        if (checkColumn(rs, "variants"))
+            p.setVariants(rs.getString("variants"));
+
         // Ideally fetch images too, but for list view we might skip or do eager fetch
         // in separate query
         p.setImages(getProductImages(p.getId()));
@@ -168,5 +175,14 @@ public class ProductServiceImpl implements ProductService {
             // Suppress or log
         }
         return list;
+    }
+
+    private boolean checkColumn(ResultSet rs, String colName) {
+        try {
+            rs.findColumn(colName);
+            return true;
+        } catch (SQLException e) {
+            return false;
+        }
     }
 }

@@ -23,9 +23,9 @@ INSERT INTO payment_methods (customer_id, bank_name, account_number, account_hol
 
 -- Insert Sample Product Images
 INSERT INTO product_images (product_id, image_url) VALUES
-(1, '/assets/images/product-1.jpg'),
-(2, '/assets/images/product-2.jpg'),
-(3, '/assets/images/product-3.jpg'),
-(4, '/assets/images/product-4.jpg'),
-(5, '/assets/images/product-5.jpg'),
-(6, '/assets/images/product-6.jpg');
+(1, 'https://placehold.co/400x400/png?text=Smartphone'),
+(2, 'https://placehold.co/400x400/png?text=Headphones'),
+(3, 'https://placehold.co/400x400/png?text=Shoes'),
+(4, 'https://placehold.co/400x400/png?text=Coffee'),
+(5, 'https://placehold.co/400x400/png?text=Laptop'),
+(6, 'https://placehold.co/400x400/png?text=Yoga');

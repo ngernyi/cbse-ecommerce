@@ -9,6 +9,9 @@ public class Product {
     private Double price;
     private Double rating;
     private String description;
+    private Double weight;
+    private String dimensions;
+    private String variants; // JSON or CSV string
     private List<Category> categories;
     private List<ProductImage> images;
 
@@ -53,6 +56,30 @@ public class Product {
 
     public void setDescription(String description) {
         this.description = description;
+    }
+
+    public Double getWeight() {
+        return weight;
+    }
+
+    public void setWeight(Double weight) {
+        this.weight = weight;
+    }
+
+    public String getDimensions() {
+        return dimensions;
+    }
+
+    public void setDimensions(String dimensions) {
+        this.dimensions = dimensions;
+    }
+
+    public String getVariants() {
+        return variants;
+    }
+
+    public void setVariants(String variants) {
+        this.variants = variants;
     }
 
     public List<Category> getCategories() {

@@ -17,30 +17,48 @@ export const orderService = {
 
     getOrderById: async (id) => {
         try {
-            // We need an endpoint for single order. OrderRestService has @GET @Path("/orders/{customerId}") returning list.
-            // It doesn't seem to have single order endpoint in the REST service I browsed earlier?
-            // Let's verify OrderRestService.
-            // Assuming it might not exist, we filter the list for now.
-            // Ideally we add getOrder(orderId).
-            const userStr = localStorage.getItem('user');
-            const userId = userStr ? JSON.parse(userStr).id : 1;
-            const orders = await orderService.getOrders();
-            const order = orders.find(o => o.id == id); // Loose equality for string/number match
-            if (order) return order;
-            throw new Error('Order not found');
+            const response = await api.get(`/order/orders/details/${id}`);
+            return response.data;
         } catch (error) {
+            console.error(`Failed to load order ${id}`, error);
             throw error;
         }
     },
 
     requestCancellation: async (id) => {
-        // Not implemented in backend yet.
-        console.warn("Cancellation not implemented in OSGi backend.");
-        return null;
+        try {
+            const response = await api.post(`/order/orders/${id}/cancel`);
+            // Backend returns boolean, but we need updated order or confirmation.
+            // We should re-fetch order details or return manual update.
+            return await orderService.getOrderById(id);
+        } catch (error) {
+            throw error;
+        }
     },
 
     checkout: async (customerId) => {
         const response = await api.post(`/order/orders/${customerId}/checkout`);
         return response.data;
+    },
+
+    // Admin
+    getAllOrders: async () => {
+        try {
+            const response = await api.get('/order/orders/admin/all');
+            return response.data;
+        } catch (error) {
+            // console.error("Failed to load admin orders", error); // optional logging
+            throw error;
+        }
+    },
+
+    processCancellation: async (orderId, approve) => {
+        try {
+            await api.post(`/order/orders/${orderId}/process-cancellation`, null, {
+                params: { approve }
+            });
+        } catch (error) {
+            throw error;
+        }
     }
 };

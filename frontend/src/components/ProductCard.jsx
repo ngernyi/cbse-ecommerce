@@ -29,7 +29,7 @@ const ProductCard = ({ product }) => {
     };
 
     const imageUrl = (product.images && product.images.length > 0)
-        ? `/shop${product.images[0].imageUrl}`
+        ? (product.images[0].imageUrl.startsWith('http') ? product.images[0].imageUrl : `/shop${product.images[0].imageUrl}`)
         : `https://placehold.co/400x400?text=${encodeURIComponent(product.name)}`;
 
     return (

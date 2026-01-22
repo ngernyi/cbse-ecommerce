@@ -26,8 +26,10 @@ public class CustomerRestService {
         return customerService.getCustomer(id);
     }
 
-    @POST
-    public void updateCustomer(Customer customer) {
+    @PUT
+    @Path("/{id}")
+    public void updateCustomer(@PathParam("id") Long id, Customer customer) {
+        customer.setId(id);
         customerService.updateCustomer(customer);
     }
 
@@ -88,9 +90,10 @@ public class CustomerRestService {
 
     @POST
     @Path("/{customerId}/addresses")
-    public void addAddress(@PathParam("customerId") Long customerId, Address address) {
+    public Address addAddress(@PathParam("customerId") Long customerId, Address address) {
         address.setCustomerId(customerId);
         customerService.addAddress(address);
+        return address;
     }
 
     @PUT

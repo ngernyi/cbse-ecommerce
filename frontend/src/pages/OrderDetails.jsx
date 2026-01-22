@@ -59,7 +59,7 @@ const OrderDetails = () => {
                         </span>
                     </h1>
                     <p style={{ color: 'var(--color-text-muted)', marginTop: 'var(--spacing-2)' }}>
-                        Placed on {new Date(order.date).toLocaleString()}
+                        Placed on {new Date(order.orderDate).toLocaleString()}
                     </p>
                 </div>
 
@@ -95,13 +95,17 @@ const OrderDetails = () => {
                     <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--spacing-4)' }}>
                         {order.items.map(item => (
                             <div key={item.id} style={{ display: 'flex', gap: 'var(--spacing-4)', alignItems: 'center' }}>
-                                <img src={item.image} alt={item.name} style={{ width: '60px', height: '60px', objectFit: 'cover', borderRadius: 'var(--radius-md)' }} />
+                                <img
+                                    src={item.product?.images?.[0]?.imageUrl || 'https://via.placeholder.com/60'}
+                                    alt={item.product?.name || 'Product'}
+                                    style={{ width: '60px', height: '60px', objectFit: 'cover', borderRadius: 'var(--radius-md)' }}
+                                />
                                 <div style={{ flex: 1 }}>
-                                    <h3 style={{ fontWeight: 'bold' }}>{item.name}</h3>
+                                    <h3 style={{ fontWeight: 'bold' }}>{item.product?.name || 'Unknown Product'}</h3>
                                     <p style={{ color: 'var(--color-text-muted)', fontSize: 'var(--font-size-sm)' }}>Quantity: {item.quantity}</p>
                                 </div>
                                 <div style={{ fontWeight: 'bold' }}>
-                                    ${item.price.toFixed(2)}
+                                    ${(item.product?.price || 0).toFixed(2)}
                                 </div>
                             </div>
                         ))}
@@ -109,7 +113,7 @@ const OrderDetails = () => {
                     <hr style={{ border: 'none', borderTop: '1px solid var(--color-border)', margin: 'var(--spacing-4) 0' }} />
                     <div style={{ display: 'flex', justifyContent: 'space-between', fontWeight: 'bold', fontSize: 'var(--font-size-lg)' }}>
                         <span>Total</span>
-                        <span>${order.total.toFixed(2)}</span>
+                        <span>${order.totalAmount.toFixed(2)}</span>
                     </div>
                 </div>
 

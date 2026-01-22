@@ -1,6 +1,7 @@
 package com.mycompany.ecommerce.order.rest;
 
 import com.mycompany.ecommerce.api.OrderService;
+import com.mycompany.ecommerce.api.model.Order;
 import com.mycompany.ecommerce.api.model.OrderItem;
 import com.mycompany.ecommerce.api.model.OrderStatus;
 
@@ -8,7 +9,7 @@ import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
 import java.util.List;
 
-@Path("/orders")
+@Path("/")
 @Produces(MediaType.APPLICATION_JSON)
 @Consumes(MediaType.APPLICATION_JSON)
 public class OrderRestService {
@@ -31,13 +32,13 @@ public class OrderRestService {
 
     @GET
     @Path("/{customerId}")
-    public List<Long> getOrders(@PathParam("customerId") Long customerId) {
+    public List<Order> getOrders(@PathParam("customerId") Long customerId) {
         return orderService.getOrdersByCustomer(customerId);
     }
 
     @GET
     @Path("/details/{orderId}")
-    public List<OrderItem> getOrderDetails(@PathParam("orderId") Long orderId) {
+    public Order getOrderDetails(@PathParam("orderId") Long orderId) {
         return orderService.getOrderDetails(orderId);
     }
 
@@ -61,5 +62,13 @@ public class OrderRestService {
     @Path("/{orderId}/process-cancellation")
     public void processCancellation(@PathParam("orderId") Long orderId, @QueryParam("approve") boolean approve) {
         orderService.processCancellation(orderId, approve);
+    }
+
+    // ==================== Admin ====================
+
+    @GET
+    @Path("/admin/all")
+    public List<Order> getAllOrders() {
+        return orderService.getAllOrders();
     }
 }

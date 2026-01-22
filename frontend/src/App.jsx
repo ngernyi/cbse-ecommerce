@@ -18,6 +18,7 @@ import OrderDetails from './pages/OrderDetails';
 import AdminDashboard from './pages/admin/AdminDashboard';
 import ProductManagement from './pages/admin/ProductManagement';
 import CategoryManagement from './pages/admin/CategoryManagement';
+import OrderManagement from './pages/admin/OrderManagement';
 import { AuthProvider } from './context/AuthContext';
 import { CartProvider } from './context/CartContext';
 import { WishlistProvider } from './context/WishlistContext';
@@ -50,7 +51,7 @@ function App() {
                 <Route index element={<AdminDashboard />} />
                 <Route path="products" element={<ProductManagement />} />
                 <Route path="categories" element={<CategoryManagement />} />
-                <Route path="orders" element={<div>Orders Management (Coming Soon)</div>} />
+                <Route path="orders" element={<OrderManagement />} />
                 <Route path="customers" element={<div>Customer Management (Coming Soon)</div>} />
                 <Route path="settings" element={<div>Settings (Coming Soon)</div>} />
               </Route>

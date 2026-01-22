@@ -41,7 +41,10 @@ CREATE TABLE IF NOT EXISTS products (
     description VARCHAR(1000),
     price DOUBLE,
     rating DOUBLE,
-    category VARCHAR(100)
+    category VARCHAR(100),
+    weight DOUBLE,
+    dimensions VARCHAR(255),
+    variants VARCHAR(1000)
 );
 
 CREATE TABLE IF NOT EXISTS product_images (
@@ -49,6 +52,20 @@ CREATE TABLE IF NOT EXISTS product_images (
     product_id BIGINT,
     image_url VARCHAR(255),
     FOREIGN KEY (product_id) REFERENCES products(id)
+);
+
+CREATE TABLE IF NOT EXISTS categories (
+    id BIGINT AUTO_INCREMENT PRIMARY KEY,
+    name VARCHAR(255),
+    description VARCHAR(500)
+);
+
+CREATE TABLE IF NOT EXISTS product_categories (
+    product_id BIGINT,
+    category_id BIGINT,
+    PRIMARY KEY (product_id, category_id),
+    FOREIGN KEY (product_id) REFERENCES products(id),
+    FOREIGN KEY (category_id) REFERENCES categories(id)
 );
 
 CREATE TABLE IF NOT EXISTS wishlist_products (

@@ -1,47 +1,66 @@
-# MySQL Setup Instructions for OSGi E-Commerce
+# MySQL Database Setup for OSGi E-Commerce Project
 
-Since we are switching from H2 to MySQL (via XAMPP) to resolve persistence and table issues, please follow these steps to configure your environment.
+This document provides instructions on how to set up and configure a MySQL database for the OSGi E-Commerce project.
 
-## 1. Start XAMPP
-1. Open **XAMPP Control Panel**.
-2. Click **Start** for **Apache** and **MySQL**.
-3. Ensure the ports (default 3306 for MySQL) are green and running.
+## 1. Prerequisites
+- MySQL Server installed and running.
+- A MySQL client (e.g., MySQL Workbench, DBeaver, or the command-line client) to execute SQL scripts.
 
-## 2. Initialize the Database
-Since the MySQL driver doesn't support the automatic `INIT=RUNSCRIPT` feature used by H2, you must manually import the SQL schemas.
+## 2. Database Creation
+First, you need to create a new database for the application. You can do this using your MySQL client.
 
-1. Open your browser and go to [http://localhost/phpmyadmin](http://localhost/phpmyadmin).
-2. Click on **New** in the left sidebar to create a database.
-3. Database Name: `ecommerce`
-4. Click **Create**.
-5. Select the `ecommerce` database.
-6. Click the **Import** tab.
-7. Click **Choose File** and select `osgi/schema.sql` from your project directory.
-8. Click **Import** (or **Go**) at the bottom.
-9. Repeat steps 6-8 for `osgi/data.sql` to populate sample data.
-
-## 3. Install MySQL Driver in Karaf
-When you start Apache Karaf, you need to provide the MySQL connector so the application can connect to XAMPP.
-
-In the Karaf console, run:
-```bash
-bundle:install -s mvn:com.mysql/mysql-connector-j/8.0.33
+```sql
+CREATE DATABASE osgi_ecommerce;
 ```
-(Or any version compatible with your Java setup. 8.0.33 is standard).
 
-You may also need to install `pax-jdbc` features if not already present, but the application uses a direct DataSource bean, so the driver bundle should be sufficient if the package imports are correct.
+## 3. User Creation
+It is recommended to create a dedicated user for the application to access the database.
 
-## 4. Rebuild and Deploy
-1. In your project root, run:
-   ```bash
-   mvn clean install
-   ```
-2. Start Karaf.
-3. If you have a distribution or feature file, update it to include the mysql-connector dependency.
-4. Deploy the features/bundles.
-   - `karaf@root> feature:repo-add mvn:com.mycompany.ecommerce/features/1.0.0-SNAPSHOT/xml/features`
-   - `karaf@root> feature:install ecommerce-all`
+```sql
+CREATE USER 'osgi_user'@'localhost' IDENTIFIED BY 'password';
+GRANT ALL PRIVILEGES ON osgi_ecommerce.* TO 'osgi_user'@'localhost';
+FLUSH PRIVILEGES;
+```
+**Note:** Replace `'password'` with a strong password.
 
-## Troubleshooting
-- **ClassNotFoundException: com.mysql.cj.jdbc.MysqlDataSource**: Ensure the `mysql-connector-java` bundle is installed and has status `Active` in Karaf.
-- **Connection Refused**: Ensure XAMPP MySQL is running on port 3306.
+## 4. Karaf Configuration
+To connect the application to the MySQL database, you need to configure a datasource in Apache Karaf. This is done in the `customer-impl/src/main/resources/OSGI-INF/blueprint/datasource-mysql.xml` file.
+
+```xml
+<?xml version="1.0" encoding="UTF-8"?>
+<blueprint xmlns="http://www.osgi.org/xmlns/blueprint/v1.0.0">
+
+    <bean id="mysqlDataSource" class="com.mysql.cj.jdbc.MysqlDataSource">
+        <property name="url" value="jdbc:mysql://localhost:3306/osgi_ecommerce"/>
+        <property name="user" value="osgi_user"/>
+        <property name="password" value="password"/>
+    </bean>
+
+    <service ref="mysqlDataSource" interface="javax.sql.DataSource">
+        <service-properties>
+            <entry key="osgi.jndi.service.name" value="jdbc/osgi_ecommerce_ds"/>
+        </service-properties>
+    </service>
+
+</blueprint>
+```
+Make sure the `url`, `user`, and `password` properties match your MySQL setup.
+
+## 5. Schema and Data Initialization
+The database schema and initial data are defined in the following files in the root of the project:
+- `schema.sql`: Contains the `CREATE TABLE` statements to create the database schema.
+- `data.sql`: Contains `INSERT` statements to populate the database with sample data.
+
+You need to execute these scripts in your `osgi_ecommerce` database before running the application. You can do this using your MySQL client.
+
+## 6. Install MySQL JDBC Driver in Karaf
+Before deploying the application, you need to install the MySQL JDBC driver in Karaf.
+
+1.  Open the Karaf console.
+2.  Install the driver using the `bundle:install` command. You may need to download the MySQL Connector/J driver first.
+    ```
+    bundle:install -s mvn:mysql/mysql-connector-java/8.0.28
+    ```
+    (The version may vary)
+
+After completing these steps, your OSGi application will be able to connect to the MySQL database.

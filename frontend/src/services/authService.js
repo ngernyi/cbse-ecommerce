@@ -39,7 +39,7 @@ export const authService = {
             const currentUser = JSON.parse(localStorage.getItem('user'));
             if (!currentUser || !currentUser.id) throw new Error('No user logged in');
 
-            const response = await api.put(`/customer/${currentUser.id}`, data);
+            const response = await api.put(`/${currentUser.id}`, data);
             const updatedUser = response.data;
             localStorage.setItem('user', JSON.stringify(updatedUser));
             return updatedUser;
