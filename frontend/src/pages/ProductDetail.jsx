@@ -25,8 +25,15 @@ const ProductDetail = () => {
         try {
             const data = await productService.getProductById(id);
             setProduct(data);
-            const recs = await productService.getRecommendations();
-            setRecommendations(recs.filter(p => p.id !== id));
+
+            if (data.categories && data.categories.length > 0) {
+                const categoryId = data.categories[0].id;
+                const recs = await productService.getAllProducts({ category: categoryId });
+                // Filter out current product and limit to 4 items
+                setRecommendations(recs.filter(p => p.id !== data.id).slice(0, 4));
+            } else {
+                setRecommendations([]);
+            }
         } catch (error) {
             console.error("Failed to load product", error);
         } finally {
@@ -58,18 +65,18 @@ const ProductDetail = () => {
                     <img
                         src={
                             product.images && product.images.length > 0
-                            ? `${api.defaults.baseURL}${product.images[0].imageUrl}`
-                            : ''
+                                ? `${api.defaults.baseURL}${product.images[0].imageUrl}`
+                                : ''
                         }
                         alt={product.name}
                         style={{ width: '100%', height: 'auto', display: 'block' }}
-                        />
+                    />
                 </div>
 
                 {/* Details */}
                 <div>
                     <div style={{ marginBottom: 'var(--spacing-2)', textTransform: 'uppercase', color: 'var(--color-text-muted)', fontSize: 'var(--font-size-sm)', letterSpacing: '0.05em' }}>
-                        {product.category}
+                        {product.categories && product.categories.length > 0 ? product.categories[0].name : 'Uncategorized'}
                     </div>
                     <h1 style={{ fontSize: 'var(--font-size-3xl)', fontWeight: 'bold', marginBottom: 'var(--spacing-4)' }}>{product.name}</h1>
 

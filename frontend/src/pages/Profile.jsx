@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { Link } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { User, Mail, Phone, Save, Loader } from 'lucide-react';
 
@@ -76,15 +77,15 @@ const Profile = () => {
                     <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 'var(--spacing-6)' }}>
                         <h3 style={{ fontSize: 'var(--font-size-xl)', fontWeight: 'bold' }}>Personal Information</h3>
                         <div style={{ display: 'flex', gap: 'var(--spacing-2)' }}>
-                            <a href="/addresses" className="btn btn-outline" style={{ fontSize: 'var(--font-size-xs)' }}>
+                            <Link to="/addresses" className="btn btn-outline" style={{ fontSize: 'var(--font-size-xs)' }}>
                                 Manage Addresses
-                            </a>
-                            <a href="/payment-methods" className="btn btn-outline" style={{ fontSize: 'var(--font-size-xs)' }}>
+                            </Link>
+                            <Link to="/payment-methods" className="btn btn-outline" style={{ fontSize: 'var(--font-size-xs)' }}>
                                 Payment Methods
-                            </a>
-                            <a href="/orders" className="btn btn-outline" style={{ fontSize: 'var(--font-size-xs)' }}>
+                            </Link>
+                            <Link to="/orders" className="btn btn-outline" style={{ fontSize: 'var(--font-size-xs)' }}>
                                 My Orders
-                            </a>
+                            </Link>
                             {!isEditing && (
                                 <button
                                     onClick={() => setIsEditing(true)}

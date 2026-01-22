@@ -1,82 +1,48 @@
-// Mock address data stored in localStorage
-const STORAGE_KEY = 'user_addresses';
-
-const MOCK_ADDRESSES = [
-    {
-        id: '1',
-        label: 'Home',
-        fullName: 'Alex Johnson',
-        street: '123 Main St, Apt 4B',
-        city: 'New York',
-        state: 'NY',
-        zipCode: '10001',
-        country: 'USA',
-        isDefault: true
-    }
-];
+import api from './api';
+import { authService } from './authService';
 
 export const addressService = {
     getAddresses: async () => {
-        return new Promise((resolve) => {
-            setTimeout(() => {
-                const stored = localStorage.getItem(STORAGE_KEY);
-                resolve(stored ? JSON.parse(stored) : MOCK_ADDRESSES);
-            }, 500);
-        });
+        try {
+            const user = authService.getCurrentUser();
+            if (!user) throw new Error('User not authenticated');
+            const response = await api.get(`/addresses/customer/${user.id}`);
+            return response.data;
+        } catch (error) {
+            console.error('Error fetching addresses:', error);
+            throw error;
+        }
     },
 
     addAddress: async (address) => {
-        return new Promise((resolve) => {
-            setTimeout(() => {
-                const stored = JSON.parse(localStorage.getItem(STORAGE_KEY) || JSON.stringify(MOCK_ADDRESSES));
-                const newAddress = { ...address, id: Date.now().toString() };
-
-                // If it's the first address or marked default, handle defaults
-                if (newAddress.isDefault || stored.length === 0) {
-                    stored.forEach(a => a.isDefault = false);
-                    newAddress.isDefault = true;
-                }
-
-                const updated = [...stored, newAddress];
-                localStorage.setItem(STORAGE_KEY, JSON.stringify(updated));
-                resolve(newAddress);
-            }, 500);
-        });
+        try {
+            const user = authService.getCurrentUser();
+            if (!user) throw new Error('User not authenticated');
+            const response = await api.post(`/addresses/customer/${user.id}`, address);
+            return response.data;
+        } catch (error) {
+            console.error('Error adding address:', error);
+            throw error;
+        }
     },
 
     updateAddress: async (id, updatedData) => {
-        return new Promise((resolve) => {
-            setTimeout(() => {
-                const stored = JSON.parse(localStorage.getItem(STORAGE_KEY) || JSON.stringify(MOCK_ADDRESSES));
-                let updatedAddresses = stored.map(addr => {
-                    if (addr.id === id) {
-                        return { ...addr, ...updatedData };
-                    }
-                    return addr;
-                });
-
-                // Handle default switch
-                if (updatedData.isDefault) {
-                    updatedAddresses = updatedAddresses.map(addr => {
-                        if (addr.id !== id) addr.isDefault = false;
-                        return addr;
-                    });
-                }
-
-                localStorage.setItem(STORAGE_KEY, JSON.stringify(updatedAddresses));
-                resolve(updatedAddresses.find(a => a.id === id));
-            }, 500);
-        });
+        try {
+            const response = await api.put(`/addresses/${id}`, updatedData);
+            return response.data;
+        } catch (error) {
+            console.error('Error updating address:', error);
+            throw error;
+        }
     },
 
     deleteAddress: async (id) => {
-        return new Promise((resolve) => {
-            setTimeout(() => {
-                const stored = JSON.parse(localStorage.getItem(STORAGE_KEY) || JSON.stringify(MOCK_ADDRESSES));
-                const filtered = stored.filter(addr => addr.id !== id);
-                localStorage.setItem(STORAGE_KEY, JSON.stringify(filtered));
-                resolve(true);
-            }, 500);
-        });
+        try {
+            await api.delete(`/addresses/${id}`);
+            return true;
+        } catch (error) {
+            console.error('Error deleting address:', error);
+            throw error;
+        }
     }
 };

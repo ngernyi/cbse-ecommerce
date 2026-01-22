@@ -3,9 +3,12 @@ import { wishlistService } from '../services/wishlistService';
 import { Trash2, ShoppingCart, HeartOff, Loader } from 'lucide-react';
 import { Link } from 'react-router-dom';
 
+import { useCart } from '../context/CartContext';
+
 const Wishlist = () => {
     const [items, setItems] = useState([]);
     const [loading, setLoading] = useState(true);
+    const { addToCart } = useCart();
 
     useEffect(() => {
         loadWishlist();
@@ -28,6 +31,16 @@ const Wishlist = () => {
             setItems(updated);
         } catch (error) {
             console.error("Failed to remove item", error);
+        }
+    };
+
+    const handleAddToCart = async (item) => {
+        try {
+            await addToCart(item);
+            await handleRemove(item.id);
+            alert(`${item.name} moved to cart!`);
+        } catch (error) {
+            console.error("Failed to move to cart", error);
         }
     };
 
@@ -67,7 +80,7 @@ const Wishlist = () => {
                                     ${item.price.toFixed(2)}
                                 </p>
                                 <div style={{ marginTop: 'auto', display: 'flex', gap: 'var(--spacing-2)' }}>
-                                    <button className="btn btn-primary" style={{ flex: 1, gap: 'var(--spacing-2)' }}>
+                                    <button onClick={() => handleAddToCart(item)} className="btn btn-primary" style={{ flex: 1, gap: 'var(--spacing-2)' }}>
                                         <ShoppingCart size={16} /> Add
                                     </button>
                                     <button

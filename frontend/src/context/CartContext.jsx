@@ -17,7 +17,7 @@ export const CartProvider = ({ children }) => {
         if (!loading) {
             const calculated = cartService.calculateTotals(items, coupon);
             setTotals(calculated);
-            cartService.saveCart(items, coupon);
+            // No need to saveCart locally anymore, backend handles persistence
         }
     }, [items, coupon, loading]);
 
@@ -33,30 +33,33 @@ export const CartProvider = ({ children }) => {
         }
     };
 
-    const addToCart = (product, quantity = 1) => {
-        setItems(prev => {
-            const existing = prev.find(item => item.id === product.id);
-            if (existing) {
-                return prev.map(item =>
-                    item.id === product.id
-                        ? { ...item, quantity: item.quantity + quantity }
-                        : item
-                );
-            } else {
-                return [...prev, { ...product, quantity }];
-            }
-        });
+    const addToCart = async (product, quantity = 1) => {
+        try {
+            const data = await cartService.addToCart(product, quantity);
+            setItems(data.items);
+        } catch (error) {
+            console.error("Failed to add to cart", error);
+            alert("Failed to add to cart. Please try again.");
+        }
     };
 
-    const removeFromCart = (productId) => {
-        setItems(prev => prev.filter(item => item.id !== productId));
+    const removeFromCart = async (cartItemId) => {
+        try {
+            const data = await cartService.removeFromCart(cartItemId);
+            setItems(data.items);
+        } catch (error) {
+            console.error("Failed to remove from cart", error);
+        }
     };
 
-    const updateQuantity = (productId, newQuantity) => {
+    const updateQuantity = async (cartItemId, newQuantity) => {
         if (newQuantity < 1) return;
-        setItems(prev => prev.map(item =>
-            item.id === productId ? { ...item, quantity: newQuantity } : item
-        ));
+        try {
+            const data = await cartService.updateQuantity(cartItemId, newQuantity);
+            setItems(data.items);
+        } catch (error) {
+            console.error("Failed to update quantity", error);
+        }
     };
 
     const applyCoupon = async (code) => {
@@ -73,9 +76,14 @@ export const CartProvider = ({ children }) => {
         setCoupon(null);
     };
 
-    const clearCart = () => {
-        setItems([]);
-        setCoupon(null);
+    const clearCart = async () => {
+        try {
+            await cartService.clearCart();
+            setItems([]);
+            setCoupon(null);
+        } catch (error) {
+            console.error("Failed to clear cart", error);
+        }
     };
 
     const cartCount = items.reduce((sum, item) => sum + item.quantity, 0);

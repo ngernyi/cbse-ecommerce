@@ -1,15 +1,52 @@
-import React from 'react';
-import { Link } from 'react-router-dom';
+import React, { useState } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
+
+import { useAuth } from '../context/AuthContext';
 
 const Register = () => {
+    const { register } = useAuth();
+    const [formData, setFormData] = useState({
+        name: '',
+        email: '',
+        password: ''
+    });
+    const [error, setError] = useState('');
+    const navigate = useNavigate();
+
+    const handleChange = (e) => {
+        const { name, value } = e.target;
+        setFormData(prevState => ({
+            ...prevState,
+            [name]: value
+        }));
+    };
+
+    const handleSubmit = async (e) => {
+        e.preventDefault();
+        setError('');
+
+        try {
+            await register(formData);
+            navigate('/'); // Redirect to home/dashboard after successful registration
+        } catch (err) {
+            setError('Registration failed. Please try again.');
+            console.error(err);
+        }
+    };
+
     return (
         <div className="card">
             <h2 style={{ fontSize: 'var(--font-size-2xl)', marginBottom: 'var(--spacing-6)', textAlign: 'center' }}>Create Account</h2>
-            <form style={{ display: 'flex', flexDirection: 'column', gap: 'var(--spacing-4)' }}>
+            {error && <div style={{ color: 'red', marginBottom: '1rem', textAlign: 'center' }}>{error}</div>}
+            <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: 'var(--spacing-4)' }}>
                 <div>
                     <label style={{ display: 'block', marginBottom: 'var(--spacing-2)', fontSize: 'var(--font-size-sm)', fontWeight: 'var(--font-weight-medium)' }}>Full Name</label>
                     <input
                         type="text"
+                        name="name"
+                        value={formData.name}
+                        onChange={handleChange}
+                        required
                         style={{
                             width: '100%',
                             padding: 'var(--spacing-2) var(--spacing-3)',
@@ -23,6 +60,10 @@ const Register = () => {
                     <label style={{ display: 'block', marginBottom: 'var(--spacing-2)', fontSize: 'var(--font-size-sm)', fontWeight: 'var(--font-weight-medium)' }}>Email</label>
                     <input
                         type="email"
+                        name="email"
+                        value={formData.email}
+                        onChange={handleChange}
+                        required
                         style={{
                             width: '100%',
                             padding: 'var(--spacing-2) var(--spacing-3)',
@@ -36,6 +77,10 @@ const Register = () => {
                     <label style={{ display: 'block', marginBottom: 'var(--spacing-2)', fontSize: 'var(--font-size-sm)', fontWeight: 'var(--font-weight-medium)' }}>Password</label>
                     <input
                         type="password"
+                        name="password"
+                        value={formData.password}
+                        onChange={handleChange}
+                        required
                         style={{
                             width: '100%',
                             padding: 'var(--spacing-2) var(--spacing-3)',

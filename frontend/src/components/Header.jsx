@@ -8,10 +8,19 @@ const Header = () => {
     const { user, logout } = useAuth();
     const { cartCount } = useCart();
     const navigate = useNavigate();
+    const [searchQuery, setSearchQuery] = React.useState('');
 
     const handleLogout = () => {
         logout();
         navigate('/login');
+    };
+
+    const handleSearch = () => {
+        if (searchQuery.trim()) {
+            navigate(`/?search=${encodeURIComponent(searchQuery.trim())}`);
+        } else {
+            navigate('/');
+        }
     };
 
     return (
@@ -55,6 +64,9 @@ const Header = () => {
                     <input
                         type="text"
                         placeholder="Search for products..."
+                        value={searchQuery}
+                        onChange={(e) => setSearchQuery(e.target.value)}
+                        onKeyDown={(e) => e.key === 'Enter' && handleSearch()}
                         style={{
                             border: 'none',
                             background: 'transparent',

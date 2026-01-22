@@ -1,16 +1,39 @@
-import React from 'react';
-import { Link } from 'react-router-dom';
+import React, { useState } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
+import { useAuth } from '../context/AuthContext';
 
 const Login = () => {
+    const [email, setEmail] = useState('');
+    const [password, setPassword] = useState('');
+    const [error, setError] = useState('');
+    const { login } = useAuth();
+    const navigate = useNavigate();
+
+    const handleSubmit = async (e) => {
+        e.preventDefault();
+        setError('');
+        try {
+            await login(email, password);
+            navigate('/');
+        } catch (err) {
+            setError('Failed to sign in. Please check your credentials.');
+            console.error(err);
+        }
+    };
+
     return (
         <div className="card">
             <h2 style={{ fontSize: 'var(--font-size-2xl)', marginBottom: 'var(--spacing-6)', textAlign: 'center' }}>Sign In</h2>
-            <form style={{ display: 'flex', flexDirection: 'column', gap: 'var(--spacing-4)' }}>
+            {error && <div style={{ color: 'red', marginBottom: '1rem', textAlign: 'center' }}>{error}</div>}
+            <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: 'var(--spacing-4)' }}>
                 <div>
                     <label style={{ display: 'block', marginBottom: 'var(--spacing-2)', fontSize: 'var(--font-size-sm)', fontWeight: 'var(--font-weight-medium)' }}>Email</label>
                     <input
                         type="email"
                         className="input"
+                        value={email}
+                        onChange={(e) => setEmail(e.target.value)}
+                        required
                         style={{
                             width: '100%',
                             padding: 'var(--spacing-2) var(--spacing-3)',
@@ -25,6 +48,9 @@ const Login = () => {
                     <input
                         type="password"
                         className="input"
+                        value={password}
+                        onChange={(e) => setPassword(e.target.value)}
+                        required
                         style={{
                             width: '100%',
                             padding: 'var(--spacing-2) var(--spacing-3)',

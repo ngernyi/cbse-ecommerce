@@ -50,7 +50,7 @@ const OrderHistory = () => {
                         <Link to={`/orders/${order.id}`} key={order.id} className="card" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', textDecoration: 'none', color: 'inherit', transition: 'transform 0.1s' }}>
                             <div>
                                 <div style={{ display: 'flex', alignItems: 'center', gap: 'var(--spacing-3)', marginBottom: 'var(--spacing-1)' }}>
-                                    <span style={{ fontWeight: 'bold' }}>{order.id}</span>
+                                    <span style={{ fontWeight: 'bold' }}>{order.items[0].name} #{order.id}</span>
                                     <span style={{ fontSize: 'var(--font-size-xs)', padding: '2px 8px', borderRadius: '12px', border: `1px solid ${getStatusColor(order.status)}`, color: getStatusColor(order.status) }}>{order.status}</span>
                                 </div>
                                 <p style={{ color: 'var(--color-text-muted)', fontSize: 'var(--font-size-sm)' }}>

@@ -3,18 +3,29 @@ import { Link } from 'react-router-dom';
 import { ShoppingCart, Heart, Star } from 'lucide-react';
 import { wishlistService } from '../services/wishlistService';
 
+import { useCart } from '../context/CartContext';
+
 const ProductCard = ({ product }) => {
+    const { addToCart } = useCart();
+
     const handleAddToWishlist = async (e) => {
         e.preventDefault();
-        // Simple toggle logic can be added here, for now just add
-        await wishlistService.addToWishlist(product);
-        alert(`${product.name} added to wishlist!`);
+        try {
+            await wishlistService.addToWishlist(product);
+            alert(`${product.name} added to wishlist!`);
+        } catch (error) {
+            alert("Failed to add to wishlist. Please ensure you are logged in.");
+        }
     };
 
-    const handleAddToCart = (e) => {
+    const handleAddToCart = async (e) => {
         e.preventDefault();
-        // TODO: Implement Cart Service
-        alert(`${product.name} added to cart!`);
+        try {
+            await addToCart(product);
+            alert(`${product.name} added to cart!`);
+        } catch (error) {
+            // Error handling is done in context, but we can add specific UI feedback here if needed
+        }
     };
 
     return (

@@ -30,9 +30,9 @@ const OrderDetails = () => {
         if (window.confirm("Are you sure you want to cancel this order?")) {
             setCancelling(true);
             try {
-                const updatedOrder = await orderService.requestCancellation(id);
-                setOrder(updatedOrder);
-                setMessage('Order cancelled successfully.');
+                await orderService.requestCancellation(id);
+                await loadOrder(); // Reload to get updated status and mapped structure
+                setMessage('Cancellation Requested successfully.');
             } catch (error) {
                 setMessage(error.message);
             } finally {
@@ -63,7 +63,7 @@ const OrderDetails = () => {
                     </p>
                 </div>
 
-                {order.status === 'Processing' && (
+                {(order.status === 'Processing' || order.status === 'PENDING') && (
                     <button
                         onClick={handleCancelClick}
                         disabled={cancelling}

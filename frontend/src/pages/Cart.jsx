@@ -1,13 +1,31 @@
 import React, { useState } from 'react';
 import { useCart } from '../context/CartContext';
-import { Trash2, Plus, Minus, Tag, ArrowRight, ShoppingBag } from 'lucide-react';
-import { Link } from 'react-router-dom';
+import { Trash2, Plus, Minus, Tag, ArrowRight, ShoppingBag, Loader } from 'lucide-react';
+import { Link, useNavigate } from 'react-router-dom';
+import { orderService } from '../services/orderService';
 
 const Cart = () => {
-    const { items, totals, updateQuantity, removeFromCart, applyCoupon, removeCoupon, coupon } = useCart();
+    const { items, totals, updateQuantity, removeFromCart, applyCoupon, removeCoupon, coupon, clearCart } = useCart();
     const [couponCode, setCouponCode] = useState('');
     const [couponError, setCouponError] = useState('');
     const [couponSuccess, setCouponSuccess] = useState('');
+    const [isCheckingOut, setIsCheckingOut] = useState(false);
+    const navigate = useNavigate();
+
+    const handleCheckout = async () => {
+        setIsCheckingOut(true);
+        try {
+            await orderService.checkout(items);
+            await clearCart();
+            alert('Checkout successful! Your order has been placed.');
+            navigate('/orders');
+        } catch (error) {
+            alert('Checkout failed. Please try again.');
+            console.error(error);
+        } finally {
+            setIsCheckingOut(false);
+        }
+    };
 
     const handleApplyCoupon = async (e) => {
         e.preventDefault();
@@ -125,8 +143,13 @@ const Cart = () => {
                             {couponSuccess && <p style={{ color: 'var(--color-success)', fontSize: 'var(--font-size-sm)', marginTop: '4px' }}>{couponSuccess}</p>}
                         </div>
 
-                        <button className="btn btn-primary" style={{ width: '100%', display: 'flex', justifyContent: 'center', gap: 'var(--spacing-2)', fontSize: 'var(--font-size-base)' }}>
-                            Checkout <ArrowRight size={18} />
+                        <button
+                            onClick={handleCheckout}
+                            disabled={isCheckingOut || items.length === 0}
+                            className="btn btn-primary"
+                            style={{ width: '100%', display: 'flex', justifyContent: 'center', gap: 'var(--spacing-2)', fontSize: 'var(--font-size-base)' }}
+                        >
+                            {isCheckingOut ? <Loader className="animate-spin" /> : <>Checkout <ArrowRight size={18} /></>}
                         </button>
                     </div>
                 </div>

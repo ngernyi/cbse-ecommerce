@@ -1,84 +1,125 @@
-// Mock order data
-const STORAGE_KEY = 'user_orders';
-
-const MOCK_ORDERS = [
-    {
-        id: 'ORD-1001',
-        date: '2025-10-15T14:30:00Z',
-        status: 'Delivered',
-        total: 349.99,
-        items: [
-            { id: '2', name: 'Classic Leather Handbag', price: 350.00, quantity: 1, image: 'https://images.unsplash.com/photo-1590874103328-eac38a683ce7?w=100&q=80' }
-        ],
-        shippingAddress: {
-            fullName: 'Alex Johnson',
-            street: '123 Main St, Apt 4B',
-            city: 'New York',
-            state: 'NY',
-            zipCode: '10001'
-        }
-    },
-    {
-        id: 'ORD-1002',
-        date: '2026-01-20T09:15:00Z',
-        status: 'Processing',
-        total: 120.00,
-        items: [
-            { id: '1', name: 'Luxury Silk Scarf', price: 120.00, quantity: 1, image: 'https://images.unsplash.com/photo-1544133469-801fc7be78e8?w=100&q=80' }
-        ],
-        shippingAddress: {
-            fullName: 'Alex Johnson',
-            street: '123 Main St, Apt 4B',
-            city: 'New York',
-            state: 'NY',
-            zipCode: '10001'
-        }
-    }
-];
+import api from './api';
+import { authService } from './authService';
 
 export const orderService = {
     getOrders: async () => {
-        return new Promise((resolve) => {
-            setTimeout(() => {
-                const stored = localStorage.getItem(STORAGE_KEY);
-                resolve(stored ? JSON.parse(stored) : MOCK_ORDERS);
-            }, 500);
-        });
+        try {
+            const user = authService.getCurrentUser();
+            if (!user) throw new Error('User not authenticated');
+
+            // Fetch OrderItems from backend
+            const response = await api.get(`/orders/customer/${user.id}`);
+            const orderItems = response.data;
+
+            // Map OrderItems to the "Order" structure expected by UI
+            // Since backend only has OrderItems, we treat each item as a separate "Order" for now
+            return orderItems.map(item => ({
+                id: item.id.toString(), // Use item ID as order ID
+                date: item.orderDate,
+                status: item.status, // e.g., PENDING, APPROVED, CANCELLED
+                total: item.product.price * item.quantity,
+                items: [
+                    {
+                        id: item.product.id,
+                        name: item.product.name,
+                        price: item.product.price,
+                        quantity: item.quantity,
+                        image: (item.product.images && item.product.images.length > 0)
+                            ? `${api.defaults.baseURL}${item.product.images[0].imageUrl}`
+                            : 'https://via.placeholder.com/150'
+                    }
+                ],
+                shippingAddress: item.address ? {
+                    fullName: item.address.fullName || user.name,
+                    street: item.address.street,
+                    city: item.address.city,
+                    state: item.address.state,
+                    zipCode: item.address.zipCode
+                } : {
+                    fullName: user.name,
+                    street: 'N/A',
+                    city: 'N/A',
+                    state: 'N/A',
+                    zipCode: 'N/A'
+                }
+            }));
+        } catch (error) {
+            console.error('Error fetching orders:', error);
+            throw error;
+        }
     },
 
     getOrderById: async (id) => {
-        return new Promise((resolve, reject) => {
-            setTimeout(() => {
-                const stored = JSON.parse(localStorage.getItem(STORAGE_KEY) || JSON.stringify(MOCK_ORDERS));
-                const order = stored.find(o => o.id === id);
-                if (order) resolve(order);
-                else reject(new Error('Order not found'));
-            }, 500);
-        });
+        try {
+            const response = await api.get(`/orders/${id}`);
+            const item = response.data;
+            const user = authService.getCurrentUser();
+
+            // Map single OrderItem to Order structure
+            return {
+                id: item.id.toString(),
+                date: item.orderDate,
+                status: item.status,
+                total: item.product.price * item.quantity,
+                items: [
+                    {
+                        id: item.product.id,
+                        name: item.product.name,
+                        price: item.product.price,
+                        quantity: item.quantity,
+                        image: (item.product.images && item.product.images.length > 0)
+                            ? `${api.defaults.baseURL}${item.product.images[0].imageUrl}`
+                            : 'https://via.placeholder.com/150'
+                    }
+                ],
+                shippingAddress: item.address ? {
+                    fullName: item.address.fullName || (user ? user.name : 'Guest'),
+                    street: item.address.street,
+                    city: item.address.city,
+                    state: item.address.state,
+                    zipCode: item.address.zipCode
+                } : {
+                    fullName: user ? user.name : 'Guest',
+                    street: 'N/A',
+                    city: 'N/A',
+                    state: 'N/A',
+                    zipCode: 'N/A'
+                }
+            };
+        } catch (error) {
+            console.error(`Error fetching order ${id}:`, error);
+            throw error;
+        }
     },
 
     requestCancellation: async (id) => {
-        return new Promise((resolve, reject) => {
-            setTimeout(() => {
-                const stored = JSON.parse(localStorage.getItem(STORAGE_KEY) || JSON.stringify(MOCK_ORDERS));
-                const orderIndex = stored.findIndex(o => o.id === id);
+        try {
+            const response = await api.post(`/orders/${id}/cancel-request`);
+            return response.data;
+        } catch (error) {
+            console.error('Error requesting cancellation:', error);
+            throw error;
+        }
+    },
 
-                if (orderIndex === -1) {
-                    reject(new Error('Order not found'));
-                    return;
-                }
+    checkout: async (items) => {
+        try {
+            const user = authService.getCurrentUser();
+            if (!user) throw new Error('User not authenticated');
 
-                const order = stored[orderIndex];
-                if (order.status !== 'Processing') {
-                    reject(new Error('Order cannot be cancelled'));
-                    return;
-                }
+            // Create an order item for each cart item
+            const orderPromises = items.map(item =>
+                api.post(`/orders/customer/${user.id}`, {
+                    productId: item.productId,
+                    quantity: item.quantity
+                })
+            );
 
-                order.status = 'Cancelled';
-                stored[orderIndex] = order;
-                localStorage.setItem(STORAGE_KEY, JSON.stringify(stored));
-                resolve(order);
-            }, 500);
-        });
+            await Promise.all(orderPromises);
+            return true;
+        } catch (error) {
+            console.error('Error during checkout:', error);
+            throw error;
+        }
     }
 };
