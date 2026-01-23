@@ -1,5 +1,5 @@
 Manifest-Version: 1.0
-Bnd-LastModified: 1769102086973
+Bnd-LastModified: 1769144834070
 Build-Jdk-Spec: 16
 Bundle-Blueprint: OSGI-INF/blueprint/blueprint.xml,OSGI-INF/blueprint/da
  tasource-mysql.xml

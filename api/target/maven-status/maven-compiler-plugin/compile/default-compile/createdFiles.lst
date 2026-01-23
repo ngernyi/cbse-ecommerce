@@ -12,6 +12,5 @@ com\mycompany\ecommerce\api\OrderService.class
 com\mycompany\ecommerce\api\model\ProductImage.class
 com\mycompany\ecommerce\api\model\Category.class
 com\mycompany\ecommerce\api\model\CartItem.class
-com\mycompany\ecommerce\api\customer\CustomerService.class
 com\mycompany\ecommerce\api\model\OrderItem.class
 com\mycompany\ecommerce\api\ProductService.class
