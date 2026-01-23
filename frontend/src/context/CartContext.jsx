@@ -47,7 +47,10 @@ export const CartProvider = ({ children }) => {
             }
         });
         // Call backend
-        cartService.addToCart(product, quantity).catch(err => console.error("Failed to add to cart", err));
+        // Call backend then reload to get sync state
+        cartService.addToCart(product, quantity)
+            .then(() => loadCart())
+            .catch(err => console.error("Failed to add to cart", err));
     };
 
     const removeFromCart = (productId) => {

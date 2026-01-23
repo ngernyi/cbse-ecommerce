@@ -100,20 +100,52 @@ public class ProductServiceImpl implements ProductService {
     // ==================== View Recommendations (UC-CS-03) ====================
 
     @Override
-    public List<Product> getRecommendations() {
-        // "Random" products for now as per UC description (e.g. random or logic-based)
+    public List<Product> getRecommendations(Long customerId) {
         List<Product> list = new ArrayList<>();
-        // H2/MySQL generic random. RAND() works in both.
-        String sql = "SELECT * FROM products ORDER BY RAND() LIMIT 5";
-        try (Connection conn = dataSource.getConnection();
-                PreparedStatement ps = conn.prepareStatement(sql);
-                ResultSet rs = ps.executeQuery()) {
-            while (rs.next()) {
-                list.add(mapProduct(rs));
+
+        if (customerId != null) {
+            String sql = "SELECT DISTINCT p.* FROM products p " +
+                    "WHERE p.category IN (" +
+                    "    SELECT p2.category FROM products p2 " +
+                    "    JOIN wishlist_products wp ON p2.id = wp.product_id " +
+                    "    JOIN wishlists w ON wp.wishlist_id = w.id " +
+                    "    WHERE w.customer_id = ? " +
+                    "    UNION " +
+                    "    SELECT p3.category FROM products p3 " +
+                    "    JOIN order_items oi ON p3.id = oi.product_id " +
+                    "    JOIN orders o ON oi.order_id = o.id " +
+                    "    WHERE o.customer_id = ? " +
+                    ") " +
+                    "ORDER BY RAND() LIMIT 5";
+
+            try (Connection conn = dataSource.getConnection();
+                    PreparedStatement ps = conn.prepareStatement(sql)) {
+                ps.setLong(1, customerId);
+                ps.setLong(2, customerId);
+                try (ResultSet rs = ps.executeQuery()) {
+                    while (rs.next()) {
+                        list.add(mapProduct(rs));
+                    }
+                }
+            } catch (SQLException e) {
+                e.printStackTrace();
             }
-        } catch (SQLException e) {
-            e.printStackTrace();
         }
+
+        // Fallback to random if no results or no customerId
+        if (list.isEmpty()) {
+            String sql = "SELECT * FROM products ORDER BY RAND() LIMIT 5";
+            try (Connection conn = dataSource.getConnection();
+                    PreparedStatement ps = conn.prepareStatement(sql);
+                    ResultSet rs = ps.executeQuery()) {
+                while (rs.next()) {
+                    list.add(mapProduct(rs));
+                }
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+        }
+
         return list;
     }
 
@@ -143,6 +175,7 @@ public class ProductServiceImpl implements ProductService {
         p.setPrice(rs.getDouble("price"));
         p.setRating(rs.getDouble("rating"));
         p.setDescription(rs.getString("description"));
+        p.setCategory(rs.getString("category"));
         if (checkColumn(rs, "weight"))
             p.setWeight(rs.getDouble("weight"));
         if (checkColumn(rs, "dimensions"))

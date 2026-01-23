@@ -14,7 +14,22 @@
             <ref component-id="orderRestService"/>
         </jaxrs:serviceBeans>
         <jaxrs:providers>
-             <bean class="com.fasterxml.jackson.jaxrs.json.JacksonJsonProvider"/>
+             <bean class="com.fasterxml.jackson.jaxrs.json.JacksonJsonProvider">
+                 <argument>
+                     <bean class="com.fasterxml.jackson.databind.ObjectMapper">
+                        <property name="modules">
+                            <list>
+                                <bean class="com.fasterxml.jackson.datatype.jsr310.JavaTimeModule"/>
+                            </list>
+                        </property>
+                        <property name="dateFormat">
+                             <bean class="java.text.SimpleDateFormat">
+                                 <argument value="yyyy-MM-dd'T'HH:mm:ss"/>
+                             </bean>
+                        </property>
+                     </bean>
+                 </argument>
+            </bean>
         </jaxrs:providers>
     </jaxrs:server>
 

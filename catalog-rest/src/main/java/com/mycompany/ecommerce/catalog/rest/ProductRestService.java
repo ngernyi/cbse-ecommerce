@@ -55,14 +55,12 @@ public class ProductRestService {
     @GET
     @Path("recommendations")
     public List<Product> getRecommendations() {
-        // Frontend might append ID, but if it fails 404, we can add a variant
-        return productService.getRecommendations();
+        return productService.getRecommendations(null);
     }
 
     @GET
     @Path("recommendations/{customerId}")
     public List<Product> getRecommendationsForCustomer(@PathParam("customerId") Long customerId) {
-        // Ignoring ID for now as per logic
-        return productService.getRecommendations();
+        return productService.getRecommendations(customerId);
     }
 }

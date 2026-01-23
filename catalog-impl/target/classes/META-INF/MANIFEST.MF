@@ -1,5 +1,5 @@
 Manifest-Version: 1.0
-Bnd-LastModified: 1769144834867
+Bnd-LastModified: 1769148625596
 Build-Jdk-Spec: 16
 Bundle-Blueprint: OSGI-INF/blueprint/blueprint.xml
 Bundle-ManifestVersion: 2

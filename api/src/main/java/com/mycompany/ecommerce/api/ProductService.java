@@ -18,7 +18,7 @@ public interface ProductService {
     List<Product> getProductsByCategory(Long categoryId);
 
     // UC-CS-03 View Recommendations
-    List<Product> getRecommendations();
+    List<Product> getRecommendations(Long customerId);
 
     // UC-CS-04 Sort Results
     // Sorting can be a parameter in search or a separate helper,

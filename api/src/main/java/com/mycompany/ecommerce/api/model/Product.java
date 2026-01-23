@@ -12,7 +12,7 @@ public class Product {
     private Double weight;
     private String dimensions;
     private String variants; // JSON or CSV string
-    private List<Category> categories;
+    private String category;
     private List<ProductImage> images;
 
     public Product() {
@@ -82,12 +82,12 @@ public class Product {
         this.variants = variants;
     }
 
-    public List<Category> getCategories() {
-        return categories;
+    public String getCategory() {
+        return category;
     }
 
-    public void setCategories(List<Category> categories) {
-        this.categories = categories;
+    public void setCategory(String category) {
+        this.category = category;
     }
 
     public List<ProductImage> getImages() {
